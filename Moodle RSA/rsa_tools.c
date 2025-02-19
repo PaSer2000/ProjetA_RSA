@@ -284,6 +284,7 @@ void chiffrementTabOctets(uint8_t* aChiffrer,uint8_t* result,int taille_aChiffre
 
   //traduit les éléments un à un
   for(int i=0;i<taille_aChiffrer;i++){
+    printf("E= %ld N  =%ld \n", e, n);
     result[i]=puissance_mod_n(aChiffrer[i],e,n);
   }
 }
@@ -296,6 +297,7 @@ void dechiffrementTabOctets(uint8_t* aDechiffrer,uint8_t* result,int taille_aDec
 
   //traduit les éléments un à un
   for(int i=0;i<taille_aDechiffrer;i++){
+    printf("D= %ld N  =%ld \n", d, n);
     result[i]=puissance_mod_n(aDechiffrer[i],d,n);
   }
 }
@@ -369,8 +371,7 @@ void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
   fclose(fichDechiffrer);
 }
 
-// main avec tests
-
+/* ---------- MAIN AVEC TESTS -- TABLEAU OCTETS ET FICHIER ---------- */
 int main() {
     rsaKey_t publicKey, privateKey;
     
@@ -383,6 +384,22 @@ int main() {
     //char *fichier_chiffre = "message_chiffre.txt";
     //char *fichier_dechiffre = "message_dechiffre.txt";
 
+    //INITIALISATION POUR TEST TABLEAU OCTETS
+    uint8_t tab[5] = {1, 2, 3,4,5};
+    uint8_t res[5];
+    uint8_t res2[5];
+
+    chiffrementTabOctets(tab, res, 5, &publicKey);
+
+    for (int i=0;  i<5; i++)  {
+       printf(" %d\n", res[i]);
+    }
+   
+    dechiffrementTabOctets(res, res2, 5, &privateKey);
+
+    for (int i=0;  i<5; i++)  {
+      printf(" %d\n", res2[i]);
+   }
     // Chiffrement
     char* fichierChiffre = chiffrementFichier(fichier_clair, &publicKey);
     //printf("Message chiffré dans %s\n", fichier_chiffre);
