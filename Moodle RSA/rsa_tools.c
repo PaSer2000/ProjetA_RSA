@@ -284,7 +284,7 @@ void chiffrementTabOctets(uint8_t* aChiffrer,uint8_t* result,int taille_aChiffre
 
   //traduit les éléments un à un
   for(int i=0;i<taille_aChiffrer;i++){
-    printf("E= %ld N  =%ld \n", e, n);
+    printf("E = %ld ; N = %ld \n", e, n);
     result[i]=puissance_mod_n(aChiffrer[i],e,n);
   }
 }
@@ -371,49 +371,81 @@ void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
   fclose(fichDechiffrer);
 }
 
+
+/* ----------- FONCTION DE TESTS -----------------*/
+
+void test1(uint8_t tab[],uint8_t res[],uint8_t res2[],rsaKey_t publicKey,rsaKey_t privateKey){
+  printf("Lancement du test 1 ...\n");
+
+  /*Tableau initial */
+  printf("Tableau à chiffrer: ");
+  for (int i=0;  i<4; i++)  {
+    printf(" %c ", tab[i]);
+  }
+  printf("\n");
+
+  /*Chiffrement du tableau*/
+  chiffrementTabOctets(tab, res, 5, &publicKey);
+
+  printf("Tableau chiffré: ");
+  for (int i=0;  i<4; i++)  {
+     printf(" %c ", res[i]);
+  }
+  printf("\n");
+ 
+  /*Déchiffrement du tableau*/
+  dechiffrementTabOctets(res, res2, 5, &privateKey);
+
+  printf("Tableau déchiffré: ");
+  for (int i=0;  i<4; i++)  {
+    printf(" %c ", res2[i]);
+  }
+  printf("\nFin du test1...\n");
+}
+
 /* ---------- MAIN AVEC TESTS -- TABLEAU OCTETS ET FICHIER ---------- */
 int main() {
-    rsaKey_t publicKey, privateKey;
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  printf("Clés générées :\n");
+  affichageClefs(&publicKey, &privateKey);  
+
+  /*INITIALISATION POUR TEST TABLEAU OCTETS*/
+  uint8_t tab[5] = {"1234"};
+  uint8_t res[5];
+  uint8_t res2[5];
+
+  test1(tab,res,res2,publicKey,privateKey);
     
-    genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+  /*test perso*/
+  printf("%ld\n",puissance_mod_n('a',publicKey.E,publicKey.N));
+  printf("%ld\n",puissance_mod_n(912673,privateKey.E,publicKey.N));
+  
 
-    printf("Clés générées :\n");
-    affichageClefs(&publicKey, &privateKey);
+  /*INITIALISATION POUR TEST FICHIERS*/
+  char *fichier_clair = "message.txt";
+  //char *fichier_chiffre = "message_chiffre.txt";
+  //char *fichier_dechiffre = "message_dechiffre.txt";
+  // Chiffrement
+  char* fichierChiffre = chiffrementFichier(fichier_clair, &publicKey);
+  //printf("Message chiffré dans %s\n", fichier_chiffre);
 
-    char *fichier_clair = "message.txt";
-    //char *fichier_chiffre = "message_chiffre.txt";
-    //char *fichier_dechiffre = "message_dechiffre.txt";
+  // Déchiffrement
+  dechiffrementFichier(fichierChiffre, &privateKey);
+  //printf("Message déchiffré dans %s\n", fichier_dechiffre);
 
-    //INITIALISATION POUR TEST TABLEAU OCTETS
-    uint8_t tab[5] = {1, 2, 3,4,5};
-    uint8_t res[5];
-    uint8_t res2[5];
-
-    chiffrementTabOctets(tab, res, 5, &publicKey);
-
-    for (int i=0;  i<5; i++)  {
-       printf(" %d\n", res[i]);
-    }
-   
-    dechiffrementTabOctets(res, res2, 5, &privateKey);
-
-    for (int i=0;  i<5; i++)  {
-      printf(" %d\n", res2[i]);
-   }
-    // Chiffrement
-    char* fichierChiffre = chiffrementFichier(fichier_clair, &publicKey);
-    //printf("Message chiffré dans %s\n", fichier_chiffre);
-
-    // Déchiffrement
-    dechiffrementFichier(fichierChiffre, &privateKey);
-    //printf("Message déchiffré dans %s\n", fichier_dechiffre);
-
-    return 0;
+  return 0;
 }
+
 /*Commentaires:
   08/02/2025
 	- On peut rajouter dans les fonctions de chiffrement et déchiffrement un 3eme argument "fichier chiffré" et "fichier déchiffré" 
   pour observer le déchiffrement. Ceci pour pouvoir tester le fichier chiffré/déchifré dans le main
   Vous pensez quoi?
+  Chaud
 
 */
