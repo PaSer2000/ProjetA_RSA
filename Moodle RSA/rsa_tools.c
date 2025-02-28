@@ -303,7 +303,7 @@ void dechiffrementTabOctets(uint8_t* aDechiffrer,uint8_t* result,int taille_aDec
 }
 
 
-/******************PHASE 1.2 - chiffrement et dechiffrement fichier************ */
+/******************PHASE 1.2 - chiffrement et dechiffrement fichier*************/
 
 char* chiffrementFichier(char* nomFich,rsaKey_t *publicKey){
   //public key composé de publicKey->E=exposant public et publicKey->N=produit de p et q
@@ -371,6 +371,12 @@ void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
   fclose(fichDechiffrer);
 }
 
+/******************PHASE 1.3 - conversion base 64*************/
+void conversionFromTabToB64(uint8_t tab[],uint8_t res[],int longueur){
+  for(int i=0;i<longueur;i+=3){
+      /*compléter avec manipulation de bits*/
+  }
+}
 
 /* ----------- FONCTION DE TESTS -----------------*/
 
@@ -422,8 +428,10 @@ int main() {
   test1(tab,res,res2,publicKey,privateKey);
     
   /*test perso*/
-  printf("%ld\n",puissance_mod_n('a',publicKey.E,publicKey.N));
-  printf("%ld\n",puissance_mod_n(912673,privateKey.E,publicKey.N));
+  printf("\n\n *****Test perso******\n\n");
+  printf("caractere 'a' après l'avoir mis à la puissance de la clé publique = %ld\n",puissance_mod_n('a',publicKey.E,publicKey.N));
+  printf("valeur 912673(=caractère 'a' chiffré) dechiffré = %ld\n",puissance_mod_n(912673,privateKey.E,publicKey.N));
+  printf("sah y a un pb\n");
   
 
   /*INITIALISATION POUR TEST FICHIERS*/
