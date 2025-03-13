@@ -6,6 +6,7 @@
 #include "rsa_common_header.h"
 //#include "phase1.h"
 #include "bezout.h"
+#include <stdlib.h>
 
 void erreur(char* msg){
   printf("*** %s ***\n",msg);
@@ -264,6 +265,11 @@ void verifRabin(uint64_t max,int iterations){
   }
 }
 
+char* my_itoa(int value, char* str, int base) {
+  sprintf(str, "%d", value);
+  return str;
+}
+
 /******************PHASE 1.0 - affichage clés************ */
 void affichageClefs(rsaKey_t *publicKey,rsaKey_t *privateKey){
   uint64_t moduleChiffrement=publicKey->N; //n=p*q
@@ -275,7 +281,7 @@ void affichageClefs(rsaKey_t *publicKey,rsaKey_t *privateKey){
 /******************PHASE 1.1 - chiffrement et dechiffrement tableau d'octet*************/
 
 
-void chiffrementTabOctets(uint8_t* aChiffrer,uint8_t* result,int taille_aChiffrer,rsaKey_t *publicKey){
+void chiffrementTabOctets(uint8_t* aChiffrer,uint64_t* result,int taille_aChiffrer,rsaKey_t *publicKey){
   //public key composé de publicKey->E=exposant public et publicKey->N=produit de p et q
 
   //identification de n et e pour faciliter la lisibilité
@@ -288,7 +294,7 @@ void chiffrementTabOctets(uint8_t* aChiffrer,uint8_t* result,int taille_aChiffre
     result[i]=puissance_mod_n(aChiffrer[i],e,n);
   }
 }
-void dechiffrementTabOctets(uint8_t* aDechiffrer,uint8_t* result,int taille_aDechiffrer,rsaKey_t *privateKey){
+void dechiffrementTabOctets(uint64_t* aDechiffrer,uint64_t* result,int taille_aDechiffrer,rsaKey_t *privateKey){
   //private key composé de privateKey->E=exposant privé(d) et privateKey->N=n(produit de p et q)
 
   //identification de n et e pour faciliter la lisibilité
@@ -372,7 +378,7 @@ void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
 }
 
 /******************PHASE 1.3 - conversion base 64*************/
-void conversionFromTabToB64(uint8_t tab[],uint8_t res[],int longueur){
+void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur){
   for(int i=0;i<longueur;i+=3){
       /*compléter avec manipulation de bits*/
   }
@@ -380,7 +386,7 @@ void conversionFromTabToB64(uint8_t tab[],uint8_t res[],int longueur){
 
 /* ----------- FONCTION DE TESTS -----------------*/
 
-void test1(uint8_t tab[],uint8_t res[],uint8_t res2[],rsaKey_t publicKey,rsaKey_t privateKey){
+void test1(uint8_t tab[],uint64_t res[],uint64_t res2[],rsaKey_t publicKey,rsaKey_t privateKey){
   printf("Lancement du test 1 ...\n");
 
   /*Tableau initial */
@@ -395,7 +401,7 @@ void test1(uint8_t tab[],uint8_t res[],uint8_t res2[],rsaKey_t publicKey,rsaKey_
 
   printf("Tableau chiffré: ");
   for (int i=0;  i<4; i++)  {
-     printf(" %c ", res[i]);
+     printf(" %ld ", res[i]);
   }
   printf("\n");
  
@@ -404,7 +410,7 @@ void test1(uint8_t tab[],uint8_t res[],uint8_t res2[],rsaKey_t publicKey,rsaKey_
 
   printf("Tableau déchiffré: ");
   for (int i=0;  i<4; i++)  {
-    printf(" %c ", res2[i]);
+    printf(" %c ", itoa(res2[i]));
   }
   printf("\nFin du test1...\n");
 }
@@ -422,8 +428,8 @@ int main() {
 
   /*INITIALISATION POUR TEST TABLEAU OCTETS*/
   uint8_t tab[5] = {"1234"};
-  uint8_t res[5];
-  uint8_t res2[5];
+  uint64_t res[5];
+  uint64_t res2[5];
 
   test1(tab,res,res2,publicKey,privateKey);
     

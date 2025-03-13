@@ -1,3 +1,3 @@
-num1 = 846930911 num2 = 719885423 cpt1 = 5 cpt2 = 11
-Retour de Bézout : U = 406462143700129347 V = 1 C = 3 M = 609693215550194020
-Calcul : C*U + M*V = 1829079646650582061, C*U + M*V mod M = 1
+num1 = 971 num2 = 853 cpt1 = 2 cpt2 = 5
+Retour de Bézout : U = 118063 V = 18446744073709551615 C = 7 M = 826440
+Calcul : C*U + M*V = 1, C*U + M*V mod M = 1
