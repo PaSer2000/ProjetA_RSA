@@ -4,7 +4,6 @@
 /// \brief calculs sur les nombres premiers, génération de clefs RSA
 
 #include "rsa_common_header.h"
-//#include "phase1.h"
 #include "bezout.h"
 #include <stdlib.h>
 
@@ -382,77 +381,6 @@ void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur){
   for(int i=0;i<longueur;i+=3){
       /*compléter avec manipulation de bits*/
   }
-}
-
-/* ----------- FONCTION DE TESTS -----------------*/
-
-void test1(uint8_t tab[],uint64_t res[],uint64_t res2[],rsaKey_t publicKey,rsaKey_t privateKey){
-  printf("Lancement du test 1 ...\n");
-
-  /*Tableau initial */
-  printf("Tableau à chiffrer: ");
-  for (int i=0;  i<4; i++)  {
-    printf(" %c ", tab[i]);
-  }
-  printf("\n");
-
-  /*Chiffrement du tableau*/
-  chiffrementTabOctets(tab, res, 5, &publicKey);
-
-  printf("Tableau chiffré: ");
-  for (int i=0;  i<4; i++)  {
-     printf(" %ld ", res[i]);
-  }
-  printf("\n");
- 
-  /*Déchiffrement du tableau*/
-  dechiffrementTabOctets(res, res2, 5, &privateKey);
-
-  printf("Tableau déchiffré: ");
-  for (int i=0;  i<4; i++)  {
-    printf(" %c ", itoa(res2[i]));
-  }
-  printf("\nFin du test1...\n");
-}
-
-/* ---------- MAIN AVEC TESTS -- TABLEAU OCTETS ET FICHIER ---------- */
-int main() {
-
-  /*Génération des clés*/
-  rsaKey_t publicKey, privateKey;
-  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
-
-  /*Affichage des clés*/
-  printf("Clés générées :\n");
-  affichageClefs(&publicKey, &privateKey);  
-
-  /*INITIALISATION POUR TEST TABLEAU OCTETS*/
-  uint8_t tab[5] = {"1234"};
-  uint64_t res[5];
-  uint64_t res2[5];
-
-  test1(tab,res,res2,publicKey,privateKey);
-    
-  /*test perso*/
-  printf("\n\n *****Test perso******\n\n");
-  printf("caractere 'a' après l'avoir mis à la puissance de la clé publique = %ld\n",puissance_mod_n('a',publicKey.E,publicKey.N));
-  printf("valeur 912673(=caractère 'a' chiffré) dechiffré = %ld\n",puissance_mod_n(912673,privateKey.E,publicKey.N));
-  printf("sah y a un pb\n");
-  
-
-  /*INITIALISATION POUR TEST FICHIERS*/
-  char *fichier_clair = "message.txt";
-  //char *fichier_chiffre = "message_chiffre.txt";
-  //char *fichier_dechiffre = "message_dechiffre.txt";
-  // Chiffrement
-  char* fichierChiffre = chiffrementFichier(fichier_clair, &publicKey);
-  //printf("Message chiffré dans %s\n", fichier_chiffre);
-
-  // Déchiffrement
-  dechiffrementFichier(fichierChiffre, &privateKey);
-  //printf("Message déchiffré dans %s\n", fichier_dechiffre);
-
-  return 0;
 }
 
 /*Commentaires:

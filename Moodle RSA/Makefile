@@ -1,6 +1,13 @@
-all:
-	gcc -Wall -c bezout.h bezout.c
-	gcc -Wall -o Executable bezout.o rsa_tools.c
+OBJ = bezout.o test.o phase1.o rsa_tools.o
+SRC = bezout.c test.c phase1.c rsa_tools.c
+
+all: Executable
+
+%.o: %.c
+	gcc -c $< -o $@
+
+Executable: $(OBJ)
+	gcc -o Executable $(OBJ)
 
 clean:
-	rm -f Executable bezout.o
+	rm -f Executable $(OBJ)

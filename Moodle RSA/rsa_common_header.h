@@ -42,4 +42,13 @@ typedef struct keyPair_s {
  	rsaKey_t privKey; //(U,N)
 } keyPair_t;
 
+/*---------------FONCTION PHASE 1--------------*/
+void affichageClefs(rsaKey_t *publicKey,rsaKey_t *privateKey);
+void chiffrementTabOctets(uint8_t* aChiffrer,uint64_t* result,int taille_aChiffrer,rsaKey_t *publicKey);
+void dechiffrementTabOctets(uint64_t* aDechiffrer,uint64_t* result,int taille_aDechiffrer,rsaKey_t *privateKey);
+char* chiffrementFichier(char* nomFich,rsaKey_t *publicKey);
+void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey);
+void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur);
+void genKeysRabin(rsaKey_t *pubKey,rsaKey_t *privKey,uint64_t max_prime);
+uint64_t puissance_mod_n (uint64_t a, uint64_t e, uint64_t n);
 #endif
