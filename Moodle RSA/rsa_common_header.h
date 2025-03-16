@@ -13,7 +13,7 @@
 #include <stdint.h> // uintX_t et la suite
 
 #define BLOCK_SIZE 4 // en octets
-//#define MAX_PRIME 1000// UINT64_MAX est trop grand sans GMP
+#define MAX_PRIME 10000// UINT64_MAX est trop grand sans GMP
 // avec GMP on peut gérer de plus grands nombres
 #define BLOCK_BASE_64 12 // caractères
 #define NAME_MAX_SIZE 32 // caractères
@@ -48,8 +48,8 @@ void genKeysRabin(rsaKey_t *pubKey,rsaKey_t *privKey,uint64_t max_prime);
 void affichageClefs(rsaKey_t *publicKey,rsaKey_t *privateKey);
 void chiffrementTabOctets(uint8_t* aChiffrer,uint64_t* result,int taille_aChiffrer,rsaKey_t *publicKey);
 void dechiffrementTabOctets(uint64_t* aDechiffrer,uint64_t* result,int taille_aDechiffrer,rsaKey_t *privateKey);
-char* chiffrementFichier(char* nomFich,rsaKey_t *publicKey);
-void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey);
+void fichier_chiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *publicKey);
+void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *privateKey);
 void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur);
 uint64_t puissance_mod_n (uint64_t a, uint64_t e, uint64_t n);
 #endif

@@ -269,7 +269,7 @@ void affichageClefs(rsaKey_t *publicKey,rsaKey_t *privateKey){
   uint64_t moduleChiffrement=publicKey->N; //n=p*q
   uint64_t exposantChiffrementPublic=publicKey->E; //e
   uint64_t exposantChiffrementPrive=privateKey->E;
-  printf("\n... Affichage clefs ...\n\nModule de chiffrement: %lu \nExposant de chiffrement publique:%lu \nExposant de chiffrement privé: %lu \n\n... Fin de l'affichage des clefs ...\n",moduleChiffrement,exposantChiffrementPublic,exposantChiffrementPrive);
+  printf("\n... Affichage clefs ...\n\nModule de chiffrement: %lu \nExposant de chiffrement publique:%lu \nExposant de chiffrement privé: %lu \n\n... Fin de l'affichage des clefs ...\n\n",moduleChiffrement,exposantChiffrementPublic,exposantChiffrementPrive);
 }
 
 /******************PHASE 1.1 - chiffrement et dechiffrement tableau d'octet*************/
@@ -303,7 +303,7 @@ void dechiffrementTabOctets(uint64_t* aDechiffrer,uint64_t* result,int taille_aD
 
 /******************PHASE 1.2 - chiffrement et dechiffrement fichier*************/
 
-char* chiffrementFichier(char* nomFich,rsaKey_t *publicKey){
+void fichier_chiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *publicKey){
   //public key composé de publicKey->E=exposant public et publicKey->N=produit de p et q
 
   //identification de n et e pour faciliter la lisibilité
@@ -318,26 +318,27 @@ char* chiffrementFichier(char* nomFich,rsaKey_t *publicKey){
   }
 
   //ouverture du fichier en écriture
-  FILE* fichChiffrer=fopen("message_chiffre.txt","wt");
-  if(fichChiffrer==NULL){
+  FILE* fichChiffre=fopen(nom_fichier_sortie,"wt");
+  if(fichChiffre==NULL){
     perror("Ouverture fichier chiffrer résultat:erreur");
     exit(2);
   }
 
   //transformation de chaque caractère et écriture dans le fichier résultat
-  char current,currentChiffrer;
-  while((current=fgetc(fichAChiffrer))!=EOF){
-    currentChiffrer=puissance_mod_n(current,e,n);
-    fputc(currentChiffrer,fichChiffrer);
+  char current;
+  uint64_t currentChiffrer;
+  while ((current = fgetc(fichAChiffrer)) != EOF) {
+      // convertir chaque caractère en uint64_t pour renvoyer un uint64_t
+      currentChiffrer = puissance_mod_n((uint64_t)current, e, n);
+      // ecrire l'entier chiffré dans le fichier de sortie
+      fprintf(fichChiffre, "%lu\n", currentChiffrer);
   }
 
   fclose(fichAChiffrer);
-  fclose(fichChiffrer);
-
-  return "message_chiffre.txt"; 
+  fclose(fichChiffre);
 }
 
-void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
+void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *privateKey){
   //public key composé de privateKey->E=exposant privé et privateKey->N=produit de p et q
 
   //identification de n et e pour faciliter la lisibilité
@@ -352,21 +353,22 @@ void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
   }
 
   //ouverture du fichier en écriture
-  FILE* fichDechiffrer=fopen("FichierDechiffrer","wt");
-  if(fichDechiffrer==NULL){
-    perror("Ouverture fichier déchiffrer:erreur");
+  FILE* fichDechiffre=fopen(nom_fichier_sortie,"wt");
+  if(fichDechiffre==NULL){
+    perror("Ouverture fichier déchiffré:erreur");
     exit(2);
   }
 
   //transformation de chaque caractère et écriture dans le fichier résultat
-  char current,currentDechiffrer;
-  while((current=fgetc(fichADechiffrer))!=EOF){
-    currentDechiffrer=puissance_mod_n(current,d,n);
-    fputc(currentDechiffrer,fichDechiffrer);
+  uint64_t current, currentDechiffrer;
+  while (fscanf(fichADechiffrer, "%lu\n", &current) != EOF) {
+      currentDechiffrer = puissance_mod_n(current, d, n);
+      // Convertir l'entier déchiffré en caractère ASCII
+      fputc((char)currentDechiffrer, fichDechiffre);
   }
 
   fclose(fichADechiffrer);
-  fclose(fichDechiffrer);
+  fclose(fichDechiffre);
 }
 
 /******************PHASE 1.3 - conversion base 64*************/
