@@ -4,7 +4,9 @@
 #include <stdint.h>
 #include "rsa_common_header.h"
 
-void test1(uint8_t tab[],uint64_t res[],uint64_t res2[],rsaKey_t publicKey,rsaKey_t privateKey);
+/******FONCTIONS DE TESTS PHASE 1******/
+void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[],rsaKey_t publicKey,rsaKey_t privateKey);
+void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[],rsaKey_t publicKey,rsaKey_t privateKey);
 
 
 #endif

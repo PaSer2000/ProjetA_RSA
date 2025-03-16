@@ -264,17 +264,12 @@ void verifRabin(uint64_t max,int iterations){
   }
 }
 
-char* my_itoa(int value, char* str, int base) {
-  sprintf(str, "%d", value);
-  return str;
-}
-
 /******************PHASE 1.0 - affichage clés************ */
 void affichageClefs(rsaKey_t *publicKey,rsaKey_t *privateKey){
   uint64_t moduleChiffrement=publicKey->N; //n=p*q
   uint64_t exposantChiffrementPublic=publicKey->E; //e
   uint64_t exposantChiffrementPrive=privateKey->E;
-  printf("\n*****Affichage clefs*****\n\nModule de chiffrement: %lu \nExposant de chiffrement publique:%lu \nExposant de chiffrement privé: %lu \n*****Fin de l'affichage des clefs*****\n\n",moduleChiffrement,exposantChiffrementPublic,exposantChiffrementPrive);
+  printf("\n... Affichage clefs ...\n\nModule de chiffrement: %lu \nExposant de chiffrement publique:%lu \nExposant de chiffrement privé: %lu \n\n... Fin de l'affichage des clefs ...\n",moduleChiffrement,exposantChiffrementPublic,exposantChiffrementPrive);
 }
 
 /******************PHASE 1.1 - chiffrement et dechiffrement tableau d'octet*************/
@@ -289,7 +284,6 @@ void chiffrementTabOctets(uint8_t* aChiffrer,uint64_t* result,int taille_aChiffr
 
   //traduit les éléments un à un
   for(int i=0;i<taille_aChiffrer;i++){
-    printf("E = %ld ; N = %ld \n", e, n);
     result[i]=puissance_mod_n(aChiffrer[i],e,n);
   }
 }
@@ -302,7 +296,6 @@ void dechiffrementTabOctets(uint64_t* aDechiffrer,uint64_t* result,int taille_aD
 
   //traduit les éléments un à un
   for(int i=0;i<taille_aDechiffrer;i++){
-    printf("D= %ld N  =%ld \n", d, n);
     result[i]=puissance_mod_n(aDechiffrer[i],d,n);
   }
 }
@@ -378,9 +371,7 @@ void dechiffrementFichier(char* nomFich,rsaKey_t *privateKey){
 
 /******************PHASE 1.3 - conversion base 64*************/
 void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur){
-  for(int i=0;i<longueur;i+=3){
-      /*compléter avec manipulation de bits*/
-  }
+  /*voir fichier otherbase64*/
 }
 
 /*Commentaires:

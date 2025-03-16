@@ -1,13 +1,23 @@
-OBJ = bezout.o test.o phase1.o rsa_tools.o
-SRC = bezout.c test.c phase1.c rsa_tools.c
+CC = gcc
+CFLAGS = -c
 
 all: Executable
 
-%.o: %.c
-	gcc -c $< -o $@
+Executable: rsa_tools.o phase1.o bezout.o test.o
+	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o
 
-Executable: $(OBJ)
-	gcc -o Executable $(OBJ)
+rsa_tools.o: rsa_tools.c rsa_common_header.h bezout.h
+	$(CC) $(CFLAGS) rsa_tools.c
+
+phase1.o: phase1.c rsa_common_header.h test.h bezout.h 
+	$(CC) $(CFLAGS) phase1.c
+
+bezout.o: bezout.c bezout.h
+	$(CC) $(CFLAGS) bezout.c
+
+test.o: test.c rsa_common_header.h test.h bezout.h
+	$(CC) $(CFLAGS) test.c
 
 clean:
-	rm -f Executable $(OBJ)
+	rm -f Executable *.o
+

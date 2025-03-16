@@ -13,23 +13,20 @@ int main() {
     genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
   
     /*Affichage des clés*/
-    printf("Clés générées :\n");
     affichageClefs(&publicKey, &privateKey);  
   
     /*INITIALISATION POUR TEST TABLEAU OCTETS*/
-    uint8_t tab[5] = {"1234"};
-    uint64_t res[5];
-    uint64_t res2[5];
+    uint8_t tab_test_1[5] = {"1234"};
+    uint64_t res_test_chiffrement_1[5];
+    uint64_t res_test_dechiffrement_1[5];
   
-    test1(tab,res,res2,publicKey,privateKey);
-      
-    /*test perso*/
-    printf("\n\n *****Test perso******\n\n");
-    printf("caractere 'a' après l'avoir mis à la puissance de la clé publique = %d\n",puissance_mod_n('a',publicKey.E,publicKey.N));
-    printf("valeur 912673(=caractère 'a' chiffré) dechiffré = %d\n",puissance_mod_n(912673,privateKey.E,publicKey.N));
-    printf("sah y a un pb\n");
-    
+    test1(tab_test_1,res_test_chiffrement_1,res_test_dechiffrement_1,publicKey,privateKey);    
   
+    uint8_t tab_test_2[20] = {"Avancement du projet"};
+    uint64_t res_test_chiffrement_2[20];
+    uint64_t res_test_dechiffrement_2[20];
+    test2(tab_test_2,res_test_chiffrement_2,res_test_dechiffrement_2,publicKey,privateKey);
+
     /*INITIALISATION POUR TEST FICHIERS*/
     char *fichier_clair = "message.txt";
     //char *fichier_chiffre = "message_chiffre.txt";
