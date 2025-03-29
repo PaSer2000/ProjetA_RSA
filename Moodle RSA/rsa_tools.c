@@ -372,15 +372,19 @@ void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *priv
 }
 
 /******************PHASE 1.3 - conversion base 64*************/
+/*
 void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur){
-  /*voir fichier otherbase64*/
+  voir fichier otherbase64
+
+
+
 }
+*/
 
 /*Commentaires:
-  08/02/2025
-	- On peut rajouter dans les fonctions de chiffrement et déchiffrement un 3eme argument "fichier chiffré" et "fichier déchiffré" 
-  pour observer le déchiffrement. Ceci pour pouvoir tester le fichier chiffré/déchifré dans le main
-  Vous pensez quoi?
-  Chaud
+
+
+  J'AI TOUS MIS DANS LE FICHIER otherbase64.c
+  Pensez-vous que c'est une bonne idée de faire un fichier par partie?
 
 */
