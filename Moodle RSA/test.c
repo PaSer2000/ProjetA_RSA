@@ -17,7 +17,7 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
   /*Tableau initial */
   printf("  Tableau à chiffrer -----> ");
   for (int i=0;  i<4; i++)  {
-    printf(" %c ", tab_a_chiffrer[i]);
+    printf("%c ", tab_a_chiffrer[i]);
   }
   printf("\n");
 
@@ -26,7 +26,7 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
   printf("  Tableau chiffré    -----> ");
   for (int i=0;  i<4; i++)  {
-     printf(" %ld ", tab_chiffre[i]);
+     printf("%ld ", tab_chiffre[i]);
   }
   printf("\n");
  
@@ -35,7 +35,7 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
   printf("  Tableau déchiffré  -----> ");
   for (int i=0;  i<4; i++)  {
-    printf(" %c ", (char)(tab_dechiffre[i]));
+    printf("%c ", (char)(tab_dechiffre[i]));
   }
   printf("\n\n... Fin du test1 ...\n");
 }
@@ -53,7 +53,7 @@ void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
   /*Tableau initial */
   printf("  Tableau à chiffrer -----> ");
   for (int i=0;  i<20; i++)  {
-    printf(" %c ", tab_a_chiffrer[i]);
+    printf("%c", tab_a_chiffrer[i]);
   }
   printf("\n");
 
@@ -62,7 +62,7 @@ void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
   printf("  Tableau chiffré    -----> ");
   for (int i=0;  i<20; i++)  {
-     printf(" %ld ", tab_chiffre[i]);
+     printf("%ld ", tab_chiffre[i]);
   }
   printf("\n");
  
@@ -71,7 +71,7 @@ void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
   printf("  Tableau déchiffré  -----> ");
   for (int i=0;  i<20; i++)  {
-    printf(" %c ", (char)(tab_dechiffre[i]));
+    printf("%c", (char)(tab_dechiffre[i]));
   }
   printf("\n\n... Fin du test2 ...\n");
 }
@@ -120,13 +120,13 @@ void test_direct(){
   chiffrementTabOctets(buffer,resultat_chiffre,100,&publicKey);
   printf("Message chiffré:");
   for (int i=0;  i<strlen(buffer); i++)  {
-    printf(" %lu ", resultat_chiffre[i]);
+    printf("%lu ", resultat_chiffre[i]);
   }
 
   dechiffrementTabOctets(resultat_chiffre,resultat_dechiffre,100,&privateKey);
   printf("\nMessage déchiffré:");
   for (int i=0;  i<strlen(buffer); i++)  {
-    printf(" %c ", (char)(resultat_dechiffre[i]));
+    printf("%c", (char)(resultat_dechiffre[i]));
   }
 
   printf("\n\n... Fin du test en direct ...\n");
