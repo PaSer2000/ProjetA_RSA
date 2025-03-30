@@ -5,7 +5,6 @@
 #include "test.h"
 #include "bezout.h"
 
-
 int main() {     
   
     /*INITIALISATION POUR TEST TABLEAU OCTETS*/
@@ -25,6 +24,12 @@ int main() {
     test3(fichier_clair);
   
     test_direct();
+
+    //test_base64();
+    /*DECOMME?TER QUAND CA FONCTIONNE*/
+
+    encode_file_base64("message.txt", "encoded.txt");
+    decode_file_base64("encoded.txt", "decoded.txt");
     
     return 0;
   }

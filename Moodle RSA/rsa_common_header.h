@@ -52,4 +52,12 @@ void fichier_chiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *public
 void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *privateKey);
 void conversionFromTabToB64(uint8_t tab[],uint64_t res[],int longueur);
 uint64_t puissance_mod_n (uint64_t a, uint64_t e, uint64_t n);
+
+void build_decoding_table();
+void base64_cleanup();
+char *base64_encode(const unsigned char *data, size_t input_length, size_t *output_length);
+unsigned char *base64_decode(const char *data, size_t input_length, size_t *output_length);
+void encode_file_base64(const char* input_filename, const char* output_filename);
+void decode_file_base64(const char* input_filename, const char* output_filename);
+
 #endif

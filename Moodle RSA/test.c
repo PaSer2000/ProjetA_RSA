@@ -131,3 +131,28 @@ void test_direct(){
 
   printf("\n\n... Fin du test en direct ...\n");
 }
+
+/* FONCTIONNE ??????*/
+void test_base64() {
+  // Test d'encodage
+  const char *message = "Hello, World!";
+  size_t encoded_length;
+  char *encoded = base64_encode((const unsigned char *)message, strlen(message), &encoded_length);
+  if (encoded) {
+      printf("Encodage Base64 : %s\n", encoded);
+  } else {
+      printf("Échec de l'encodage Base64\n");
+  }
+
+  // Test de décodage
+  size_t decoded_length;
+  unsigned char *decoded = base64_decode(encoded, encoded_length, &decoded_length);
+  if (decoded) {
+      printf("Décodage Base64 : %.*s\n", (int)decoded_length, decoded);
+  } else {
+      printf("Échec du décodage Base64\n");
+  }
+
+  free(encoded);
+  free(decoded);
+}
