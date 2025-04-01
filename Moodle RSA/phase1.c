@@ -19,17 +19,15 @@ int main() {
     uint64_t res_test_dechiffrement_2[20];
     test2(tab_test_2,res_test_chiffrement_2,res_test_dechiffrement_2);
 
+    test_direct();
+
     /*INITIALISATION POUR TEST FICHIERS*/
     char *fichier_clair = "message.txt";
     test3(fichier_clair);
   
-    test_direct();
+    test4();
 
-    test_base64();
-    /*DECOMME?TER QUAND CA FONCTIONNE*/
-
-    encode_file_base64("message.txt", "encoded.txt");
-    decode_file_base64("encoded.txt", "decoded.txt");
+    test4fichiers();
     
     return 0;
   }

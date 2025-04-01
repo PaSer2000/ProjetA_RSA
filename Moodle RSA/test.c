@@ -3,7 +3,13 @@
 #include <unistd.h>
 #include "rsa_common_header.h"
 
-/* ----------- FONCTION DE TESTS PHASE1-----------------*/
+
+
+/* ------------------------ FONCTION DE TESTS PHASE1------------------------- */
+
+
+
+/******************* PARTIE 3.1.2 - PHASE 1.0 - affichage clés ********************* */
 
 void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[]){
   printf("\n... Lancement du test 1 ...\n\n");
@@ -39,6 +45,10 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
   }
   printf("\n\n... Fin du test1 ...\n");
 }
+
+
+
+/******** PARTIE 3.1.3 - PHASE 1.1 - chiffrement et dechiffrement tableau d'octet*******/
 
 void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[]){
   printf("\n... Lancement du test 2 ...\n\n");
@@ -76,32 +86,6 @@ void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
   printf("\n\n... Fin du test2 ...\n");
 }
 
-void test3(char* fichier_a_chiffrer){
-  printf("\n... Lancement du test 3 ...\n\n");
-
-  /*Génération des clés*/
-  rsaKey_t publicKey, privateKey;
-  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
-
-  /*Affichage des clés*/
-  affichageClefs(&publicKey, &privateKey); 
-
-  printf("Contenu du fichier à chiffrer:\n");
-  system("cat message.txt");
-  printf("\n");
-
-  fichier_chiffrement(fichier_a_chiffrer,"message_chiffre.txt",&publicKey);
-  printf("Contenu du fichier chiffré:\n");
-  system("cat message_chiffre.txt");
-
-  fichier_dechiffrement("message_chiffre.txt","message_dechiffre.txt",&privateKey);
-  printf("Contenu du fichier déchiffré:\n");
-  system("cat message_dechiffre.txt");
-  printf("\n");
-  printf("\n... Fin du test3 ... \n");
-
-}
-
 void test_direct(){
   printf("\n... Lancement du test en direct ...\n\n");
 
@@ -135,10 +119,46 @@ void test_direct(){
   printf("\n\n... Fin du test en direct ...\n");
 }
 
-/* FONCTIONNE ??????*/
-void test_base64() {
+
+
+/********** PARTIE 3.1.4 - PHASE 1.2 - chiffrement et dechiffrement fichier********/  
+
+void test3(char* fichier_a_chiffrer){
+  printf("\n... Lancement du test 3 ...\n\n");
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  printf("Contenu du fichier à chiffrer:\n");
+  system("cat message.txt");
+  printf("\n");
+
+  fichier_chiffrement(fichier_a_chiffrer,"message_chiffre.txt",&publicKey);
+  printf("Contenu du fichier chiffré:\n");
+  system("cat message_chiffre.txt");
+
+  fichier_dechiffrement("message_chiffre.txt","message_dechiffre.txt",&privateKey);
+  printf("Contenu du fichier déchiffré:\n");
+  system("cat message_dechiffre.txt");
+  printf("\n");
+  printf("\n... Fin du test3 ... \n");
+}
+
+
+
+/************ PARTIE 3.1.5 - PHASE 1.3 - conversion base 64 *************/
+ 
+void test4() {
+
+  printf("\n... Lancement du test 4 (base64) ...\n\n");
+
   // Test d'encodage
   const char *message = "Hello, World!";
+
   size_t encoded_length;
   char *encoded = base64_encode((const unsigned char *)message, strlen(message), &encoded_length);
   if (encoded) {
@@ -159,4 +179,29 @@ void test_base64() {
   free(encoded);
   free(decoded);
   base64_cleanup();
+
+  printf("\n... Fin du test4 (base64) ... \n");
+}
+
+void test4fichiers() {
+
+  printf("\n... Lancement du test 4 avec fichiers (base64) ...\n\n");
+
+  printf("Contenu du fichier à chiffrer:\n");
+  system("cat message.txt");
+  printf("\n");
+
+  encode_file_base64("message.txt", "encoded.txt");
+  printf("Contenu du fichier chiffré:\n");
+  system("cat encoded.txt");
+  printf("\n");
+
+  decode_file_base64("encoded.txt", "decoded.txt");
+  printf("Contenu du fichier déchiffré:\n");
+  system("cat decoded.txt");
+  printf("\n");
+
+
+  printf("\n... Fin du test4 avec fichiers (base64) ... \n");
+
 }
