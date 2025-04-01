@@ -113,13 +113,14 @@ void test_direct(){
   affichageClefs(&publicKey, &privateKey); 
 
   char buffer[100];
-  size_t taille_reelle = strlen(buffer);
-  if (buffer[taille_reelle - 1] == '\n') buffer[--taille_reelle] = '\0';
+
   uint64_t resultat_chiffre[100],resultat_dechiffre[100];
   printf("Saisir un message à chiffrer:\n");
   fgets(buffer, sizeof(buffer), stdin);
+  size_t taille_reelle = strlen(buffer);
 
   chiffrementTabOctets((uint8_t*)buffer,resultat_chiffre,100,&publicKey);
+
   printf("Message chiffré:");
   for (int i=0;  i<taille_reelle+1; i++)  {
     printf("%lu ", resultat_chiffre[i]);
