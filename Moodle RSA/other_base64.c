@@ -33,6 +33,7 @@ char *base64_encode(const unsigned char *data, size_t input_length, size_t *outp
     if (!encoded_data) return NULL;
 
     for (size_t i = 0, j = 0; i < input_length;) {
+        printf("%d",444);
         uint32_t octet_a = i < input_length ? (unsigned char)data[i++] : 0;
         uint32_t octet_b = i < input_length ? (unsigned char)data[i++] : 0;
         uint32_t octet_c = i < input_length ? (unsigned char)data[i++] : 0;
@@ -42,6 +43,10 @@ char *base64_encode(const unsigned char *data, size_t input_length, size_t *outp
         encoded_data[j++] = encoding_table[(triple >> 12) & 0x3F];
         encoded_data[j++] = encoding_table[(triple >> 6) & 0x3F];
         encoded_data[j++] = encoding_table[triple & 0x3F];
+        if (j >= *output_length) {
+            free(encoded_data);
+            return NULL;
+        }
     }
 
     for (int i = 0; i < mod_table[input_length % 3]; i++)
@@ -63,6 +68,7 @@ unsigned char *base64_decode(const char *data, size_t input_length, size_t *outp
     if (!decoded_data) return NULL;
 
     for (size_t i = 0, j = 0; i < input_length;) {
+        printf("%d",555);
         uint32_t sextet_a = data[i] == '=' ? 0 : decoding_table[(unsigned char)data[i++]];
         uint32_t sextet_b = data[i] == '=' ? 0 : decoding_table[(unsigned char)data[i++]];
         uint32_t sextet_c = data[i] == '=' ? 0 : decoding_table[(unsigned char)data[i++]];
@@ -116,6 +122,7 @@ void decode_file_base64(const char* input_filename, const char* output_filename)
     size_t output_length;
 
     while ((bytes_read = fread(buffer, 1, 4, input)) > 0) {
+        printf("%d",6);
         uint8_t* decoded = base64_decode(buffer, bytes_read, &output_length);
         fwrite(decoded, 1, output_length, output);
         free(decoded);

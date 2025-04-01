@@ -25,7 +25,7 @@ int main() {
   
     test_direct();
 
-    //test_base64();
+    test_base64();
     /*DECOMME?TER QUAND CA FONCTIONNE*/
 
     encode_file_base64("message.txt", "encoded.txt");
