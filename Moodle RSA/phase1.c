@@ -12,12 +12,12 @@ int main() {
     uint64_t res_test_chiffrement_1[5];
     uint64_t res_test_dechiffrement_1[5];
   
-    test1(tab_test_1,res_test_chiffrement_1,res_test_dechiffrement_1);    
+    test1(tab_test_1,res_test_chiffrement_1,res_test_dechiffrement_1,4);    
   
     uint8_t tab_test_2[20] = {"Avancement du projet"};
     uint64_t res_test_chiffrement_2[20];
     uint64_t res_test_dechiffrement_2[20];
-    test2(tab_test_2,res_test_chiffrement_2,res_test_dechiffrement_2);
+    test2(tab_test_2,res_test_chiffrement_2,res_test_dechiffrement_2,20);
 
     test_direct();
 

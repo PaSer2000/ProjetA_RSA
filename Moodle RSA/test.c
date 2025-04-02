@@ -11,7 +11,7 @@
 
 /******************* PARTIE 3.1.2 - PHASE 1.0 - affichage clés ********************* */
 
-void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[]){
+void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[],int longueur){
   printf("\n... Lancement du test 1 ...\n\n");
   /*Génération des clés*/
   rsaKey_t publicKey, privateKey;
@@ -22,16 +22,16 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
   /*Tableau initial */
   printf("  Tableau à chiffrer -----> ");
-  for (int i=0;  i<4; i++)  {
+  for (int i=0;  i<longueur; i++)  {
     printf("%c ", tab_a_chiffrer[i]);
   }
   printf("\n");
 
   /*Chiffrement du tableau*/
-  chiffrementTabOctets(tab_a_chiffrer, tab_chiffre, 5, &publicKey);
+  chiffrementTabOctets(tab_a_chiffrer, tab_chiffre, longueur, &publicKey);
 
   printf("  Tableau chiffré    -----> ");
-  for (int i=0;  i<4; i++)  {
+  for (int i=0;  i<longueur; i++)  {
      printf("%ld ", tab_chiffre[i]);
   }
   printf("\n");
@@ -40,7 +40,7 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
   dechiffrementTabOctets(tab_chiffre, tab_dechiffre, 5, &privateKey);
 
   printf("  Tableau déchiffré  -----> ");
-  for (int i=0;  i<4; i++)  {
+  for (int i=0;  i<longueur; i++)  {
     printf("%c ", (char)(tab_dechiffre[i]));
   }
   printf("\n\n... Fin du test1 ...\n");
@@ -50,7 +50,7 @@ void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
 /******** PARTIE 3.1.3 - PHASE 1.1 - chiffrement et dechiffrement tableau d'octet*******/
 
-void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[]){
+void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[],int longueur){
   printf("\n... Lancement du test 2 ...\n\n");
 
   /*Génération des clés*/
@@ -62,13 +62,13 @@ void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
 
   /*Tableau initial */
   printf("  Tableau à chiffrer -----> ");
-  for (int i=0;  i<20; i++)  {
+  for (int i=0;  i<longueur; i++)  {
     printf("%c", tab_a_chiffrer[i]);
   }
   printf("\n");
 
   /*Chiffrement du tableau*/
-  chiffrementTabOctets(tab_a_chiffrer, tab_chiffre, 20, &publicKey);
+  chiffrementTabOctets(tab_a_chiffrer, tab_chiffre, longueur, &publicKey);
 
   printf("  Tableau chiffré    -----> ");
   for (int i=0;  i<20; i++)  {
@@ -77,10 +77,10 @@ void test2(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffr
   printf("\n");
  
   /*Déchiffrement du tableau*/
-  dechiffrementTabOctets(tab_chiffre, tab_dechiffre, 20, &privateKey);
+  dechiffrementTabOctets(tab_chiffre, tab_dechiffre, longueur, &privateKey);
 
   printf("  Tableau déchiffré  -----> ");
-  for (int i=0;  i<20; i++)  {
+  for (int i=0;  i<longueur; i++)  {
     printf("%c", (char)(tab_dechiffre[i]));
   }
   printf("\n\n... Fin du test2 ...\n");
