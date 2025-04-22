@@ -18,9 +18,6 @@ bezout.o: bezout.c bezout.h
 test.o: test.c rsa_common_header.h test.h bezout.h
 	$(CC) $(CFLAGS) test.c
 
-other_base64.o: other_base64.c 
-	$(CC) $(CFLAGS) other_base64.cc
-
 clean:
 	rm -f Executable *.o
 

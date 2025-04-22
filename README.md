@@ -1,3 +1,3 @@
 # ProjetA_RSA
 
-On a augmenté la valeur de max prime jusqu'à obtenir des dépassements sur les fonctions
+La valeur de MAXPRIME n'est pas modifiable étant donné qu'on obtient sinon un dépassement de capacité pour les fonctions.
