@@ -6,6 +6,7 @@
 #include "rsa_common_header.h"
 #include "bezout.h"
 #include <stdlib.h>
+#include <gmp.h>
 
 void erreur(char* msg){
   printf("*** %s ***\n",msg);
@@ -500,26 +501,102 @@ void decode_file_base64(const char* input_filename, const char* output_filename)
   fclose(output);
 }
 
+/************ PARTIE 3.2.1 - PHASE 2  *************/
 
+/* Utile à savoir (source mistral + https://gmplib.org/)
+GMP – Principales fonctions et types utiles en cryptographie (C)
 
+Types de base :
+---------------
+- mpz_t : type pour les entiers de précision arbitraire (grands entiers)
+          => utilisé pour stocker les clés RSA, les messages, les résultats...
 
+Initialisation et libération :
+------------------------------
+- void mpz_init(mpz_t x);
+    Initialise une variable mpz_t x à zéro (doit être appelée AVANT toute utilisation) + allocation mémoire.
+    
+- void mpz_init_set_ui(mpz_t rop, unsigned long int op);
+    Initialise rop avec la valeur op (entier non signé classique) + allocation mémoire.
+    
+- void mpz_clear(mpz_t x);
+    Libère la mémoire allouée à x (à faire une fois que t’as fini de l’utiliser).
 
+Affectation :
+-------------
+- void mpz_set(mpz_t rop, const mpz_t op);
+    rop = op
+    
+- void mpz_set_ui(mpz_t rop, unsigned long int op);
+    rop = op (valeur entière classique)
 
+- void mpz_set_str(mpz_t rop, const char *str, int base);
+    rop = str (lit un nombre depuis une chaîne en base 10, 16, etc.)
 
+Opérations arithmétiques :
+---------------------------
+- void mpz_add(mpz_t rop, const mpz_t op1, const mpz_t op2);
+    rop = op1 + op2
 
+- void mpz_sub(mpz_t rop, const mpz_t op1, const mpz_t op2);
+    rop = op1 - op2
 
+- void mpz_mul(mpz_t rop, const mpz_t op1, const mpz_t op2);
+    rop = op1 * op2
 
+- void mpz_powm(mpz_t rop, const mpz_t base, const mpz_t exp, const mpz_t mod);
+    rop = base^exp mod mod  ← utilisée en cryptographie (exponentiation modulaire rapide)
 
+- void mpz_mod(mpz_t rop, const mpz_t op1, const mpz_t op2);
+    rop = op1 mod op2
 
+- void mpz_gcd(mpz_t rop, const mpz_t op1, const mpz_t op2);
+    rop = pgcd(op1, op2)  ← utile pour vérifier que 2 nombres sont premiers entre eux
 
+- void mpz_invert(mpz_t rop, const mpz_t op1, const mpz_t mod);
+    rop = inverse de op1 modulo mod (ex : d = e^-1 mod phi(n))
 
+Libération mémoire:
+-------------------
+- mpz_clear(mpz_t x);
+    libère l'espace mémoire associé à x
 
+Comparaison :
+-------------
+- int mpz_cmp(const mpz_t op1, const mpz_t op2);
+    retourne -1 si op1 < op2, 0 si op1 == op2, 1 si op1 > op2
 
+Génération de nombres premiers / aléatoires :
+---------------------------------------------
+- void mpz_urandomm(mpz_t rop, gmp_randstate_t state, const mpz_t n);
+    génère un entier aléatoire uniforme dans [0, n-1]
 
+- int mpz_probab_prime_p(const mpz_t n, int reps);
+    retourne si n est probablement premier (test de primalité probabiliste)
 
-
-/*Commentaires:
-
-  Pensez-vous que c'est une bonne idée de faire un fichier par partie?
+Divers :
+--------
+- gmp_randstate_t : état de générateur aléatoire
+- void gmp_randinit_default(gmp_randstate_t state);
+    initialise l’état du générateur aléatoire (à utiliser avec mpz_urandomm)
+- void gmp_randclear(gmp_randstate_t state);
+    libère la mémoire de l’état du générateur
 
 */
+
+void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n){
+  mpz_t base,exposant,modulo;
+
+  //allocation et initalisation des variables utilisées avec GMP
+  mpz_init_set_ui(base, a);
+  mpz_init_set_ui(exposant, e);
+  mpz_init_set_ui(modulo, n);
+
+  //calcul de la puissance modulaire et on stocke dans res
+  mpz_powm(res,base,exposant,modulo);
+
+  //libération des variables allouées
+  mpz_clear(base);
+  mpz_clear(exposant);
+  mpz_clear(modulo);
+}

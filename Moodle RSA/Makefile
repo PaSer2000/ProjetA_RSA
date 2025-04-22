@@ -1,10 +1,11 @@
 CC = gcc
-CFLAGS = -c -g -Wall
+CFLAGS = -c -g -Wall -lgmp
+LDFLAGS=-lgmp
 
 all: Executable
 
 Executable: rsa_tools.o phase1.o bezout.o test.o
-	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o
+	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
 
 rsa_tools.o: rsa_tools.c rsa_common_header.h bezout.h
 	$(CC) $(CFLAGS) rsa_tools.c
