@@ -205,3 +205,32 @@ void test4fichiers() {
   printf("\n... Fin du test4 avec fichiers (base64) ... \n");
 
 }
+
+/* ------------------------ FONCTION DE TESTS PHASE2------------------------- */
+
+/************ PARTIE 3.2.1 - PHASE 2  *************/
+void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t bloc){
+  printf("\n... Lancement du test 1 ...\n\n");
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  /*Tableau initial */
+  printf("  Bloc à chiffrer -----> %d\n",bloc);
+
+  /*Chiffrement du tableau*/
+  chiffrementBloc(resultatChiffrement,bloc,&publicKey);
+
+  gmp_printf("  Bloc chiffré    ----> %Zd\n", resultatChiffrement);  
+
+  /*Déchiffrement du tableau*/
+  dechiffrementBloc(resultatDechiffrement,mpz_get_ui(resultatChiffrement),&privateKey);
+
+  gmp_printf("  Bloc déchiffré  ----> %Zd\n", resultatDechiffrement);  
+
+  printf("\n\n... Fin du test1 ...\n");
+}

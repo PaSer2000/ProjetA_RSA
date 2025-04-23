@@ -14,7 +14,7 @@
 #include <gmp.h>
 
 #define BLOCK_SIZE 4 // en octets
-#define MAX_PRIME 10000// UINT64_MAX est trop grand sans GMP
+#define MAX_PRIME 1000000000000000000 //1*10^18
 // avec GMP on peut gérer de plus grands nombres
 #define BLOCK_BASE_64 12 // caractères
 #define NAME_MAX_SIZE 32 // caractères
@@ -63,5 +63,7 @@ void decode_file_base64(const char* input_filename, const char* output_filename)
 
 /*---------------FONCTION PHASE 2--------------*/
 void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n);
+void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey);
+void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *privateKey);
 
 #endif

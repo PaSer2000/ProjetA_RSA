@@ -600,3 +600,25 @@ void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n){
   mpz_clear(exposant);
   mpz_clear(modulo);
 }
+
+void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey){
+  //public key composé de publicKey->E=exposant public et publicKey->N=produit de p et q
+
+  //identification de n et e pour faciliter la lisibilité
+  uint64_t n=publicKey->N;
+  uint64_t e=publicKey->E;
+
+  //appel à la fonction
+  puissance_mod_n_gmp(resultat,bloc_a_chiffrer,e,n);
+}
+
+void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *privateKey){
+  //private key composé de privateKey->E=exposant privé(d) et privateKey->N=n(produit de p et q)
+
+  //identification de n et e pour faciliter la lisibilité
+  uint64_t n=privateKey->N;
+  uint64_t d=privateKey->E;
+
+  //appel à la fonction
+  puissance_mod_n_gmp(resultat,bloc_a_dechiffrer,d,n);
+}

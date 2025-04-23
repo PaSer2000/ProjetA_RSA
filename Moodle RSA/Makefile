@@ -1,17 +1,33 @@
 CC = gcc
 CFLAGS = -c -g -Wall -lgmp
-LDFLAGS=-lgmp
+LDFLAGS = -lgmp
 
+#Cibles principales
 all: Executable
+
+#Cibles spécifiques à chaque phase
+phase1: phase1_exec
+phase2: phase2_exec
+
+#Cibles spécifiques
+phase1_exec: rsa_tools.o phase1.o bezout.o test.o
+	$(CC) -o phase1_exec rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
+
+phase2_exec: rsa_tools.o phase2.o bezout.o test.o
+	$(CC) -o phase2_exec rsa_tools.o phase2.o bezout.o test.o $(LDFLAGS)
 
 Executable: rsa_tools.o phase1.o bezout.o test.o
 	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
 
+#les .o
 rsa_tools.o: rsa_tools.c rsa_common_header.h bezout.h
 	$(CC) $(CFLAGS) rsa_tools.c
 
-phase1.o: phase1.c rsa_common_header.h test.h bezout.h 
+phase1.o: phase1.c rsa_common_header.h test.h bezout.h
 	$(CC) $(CFLAGS) phase1.c
+
+phase2.o: phase2.c rsa_common_header.h test.h bezout.h
+	$(CC) $(CFLAGS) phase2.c
 
 bezout.o: bezout.c bezout.h
 	$(CC) $(CFLAGS) bezout.c
@@ -19,6 +35,6 @@ bezout.o: bezout.c bezout.h
 test.o: test.c rsa_common_header.h test.h bezout.h
 	$(CC) $(CFLAGS) test.c
 
+#clean
 clean:
-	rm -f Executable *.o
-
+	rm -f Executable phase1_exec phase2_exec *.o
