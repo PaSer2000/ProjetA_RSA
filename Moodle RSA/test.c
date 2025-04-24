@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include "rsa_common_header.h"
-
+#include "int2char.h"
 
 
 /* ------------------------ FONCTION DE TESTS PHASE1------------------------- */
@@ -220,17 +220,41 @@ void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t 
   affichageClefs(&publicKey, &privateKey); 
 
   /*Tableau initial */
-  printf("  Bloc à chiffrer -----> %d\n",bloc);
+  printf("  Bloc à chiffrer ----> %d\n",bloc);
 
   /*Chiffrement du tableau*/
   chiffrementBloc(resultatChiffrement,bloc,&publicKey);
-
-  gmp_printf("  Bloc chiffré    ----> %Zd\n", resultatChiffrement);  
+  gmp_printf("  Bloc chiffré    ----> %Zd\n", resultatChiffrement); 
 
   /*Déchiffrement du tableau*/
   dechiffrementBloc(resultatDechiffrement,mpz_get_ui(resultatChiffrement),&privateKey);
-
   gmp_printf("  Bloc déchiffré  ----> %Zd\n", resultatDechiffrement);  
 
   printf("\n\n... Fin du test1 ...\n");
+}
+
+void test2Phase2(char* fichier_source,char* fichier_dest){
+  printf("\n... Lancement du test 2 ...\n\n");
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  printf("Contenu du fichier à chiffrer:\n");
+  system("cat irresistiblement.txt");
+  printf("\n");
+
+  chiffrer_bloc_dans_fichier(fichier_source,fichier_dest,&publicKey);
+  printf("\nContenu du fichier chiffré:\n");
+  system("cat irresistiblement_chiffre.txt");
+
+  dechiffrer_bloc_dans_fichier("irresistiblement_chiffre.txt","irresistiblement_vf.txt",&privateKey);
+  printf("\n\nContenu du fichier déchiffré:\n");
+  system("cat irresistiblement_vf.txt");
+  printf("\n");
+  
+  printf("\n... Fin du test2 ... \n");
 }

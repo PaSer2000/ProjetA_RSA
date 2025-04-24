@@ -13,14 +13,14 @@ phase2: phase2_exec
 phase1_exec: rsa_tools.o phase1.o bezout.o test.o
 	$(CC) -o phase1_exec rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
 
-phase2_exec: rsa_tools.o phase2.o bezout.o test.o
-	$(CC) -o phase2_exec rsa_tools.o phase2.o bezout.o test.o $(LDFLAGS)
+phase2_exec: rsa_tools.o phase2.o bezout.o test.o int2char.o
+	$(CC) -o phase2_exec rsa_tools.o phase2.o bezout.o test.o int2char.o $(LDFLAGS)
 
 Executable: rsa_tools.o phase1.o bezout.o test.o
 	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
 
 #les .o
-rsa_tools.o: rsa_tools.c rsa_common_header.h bezout.h
+rsa_tools.o: rsa_tools.c rsa_common_header.h bezout.h int2char.h
 	$(CC) $(CFLAGS) rsa_tools.c
 
 phase1.o: phase1.c rsa_common_header.h test.h bezout.h
@@ -35,6 +35,8 @@ bezout.o: bezout.c bezout.h
 test.o: test.c rsa_common_header.h test.h bezout.h
 	$(CC) $(CFLAGS) test.c
 
+int2char.o: int2char.c int2char.h 
+	$(CC) $(CFLAGS) int2char.c
 #clean
 clean:
 	rm -f Executable phase1_exec phase2_exec *.o

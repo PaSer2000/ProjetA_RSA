@@ -3,10 +3,12 @@
 /// \date summer 2019 update 2025
 /// \brief calculs sur les nombres premiers, génération de clefs RSA
 
-#include "rsa_common_header.h"
-#include "bezout.h"
 #include <stdlib.h>
 #include <gmp.h>
+#include "rsa_common_header.h"
+#include "bezout.h"
+#include "int2char.h"
+
 
 void erreur(char* msg){
   printf("*** %s ***\n",msg);
@@ -621,4 +623,95 @@ void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *priva
 
   //appel à la fonction
   puissance_mod_n_gmp(resultat,bloc_a_dechiffrer,d,n);
+}
+
+void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *publicKey){
+
+  //ouverture des fichiers et controle des erreurs
+  FILE* fich_source=fopen(fichier_source,"rt");
+  if(fich_source==NULL){
+    perror("Ouverture du fichier source : échec\n");
+    exit(1);
+  }
+
+  FILE* fich_dest=fopen(fichier_dest,"wb");
+  if(fich_dest==NULL){
+    perror("Ouverture du fichier source : échec\n");
+    exit(1);
+  }
+
+  //initialisation des variables
+  char current;
+  mpz_t resultat;
+  mpz_init(resultat);
+  int nbOctets=0;
+  uint8_t a_convertir[4]={0};
+
+  while ((current = fgetc(fich_source)) != EOF) {
+    //augmentation du nombre d'octets à chaque itération et stockage de la nouvelle valeur
+    a_convertir[nbOctets]=current;
+    nbOctets++;
+    
+    //si on a lu 4 caractères on les convertit en un uint32_t et on traite
+    if(nbOctets==4){
+      chiffrementBloc(resultat,convert_4byte2int(a_convertir),publicKey);
+      fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
+      nbOctets=0;
+    }
+  }
+
+  //traitement des octets restants
+  if(nbOctets>0){
+    for(int i=nbOctets;i<4;i++){
+      a_convertir[i]=0;
+    }
+    chiffrementBloc(resultat,convert_4byte2int(a_convertir),publicKey);
+    fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
+  }
+
+  //fermeture des fichiers et libération mémoire du resultat
+  fclose(fich_source);
+  fclose(fich_dest);
+  mpz_clear(resultat);
+
+}
+
+void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *privateKey){
+  //ouverture des fichiers et controle des erreurs
+  FILE* fich_source=fopen(fichier_source,"rb");
+  if(fich_source==NULL){
+    perror("Ouverture du fichier source : échec\n");
+    exit(1);
+  }
+
+  FILE* fich_dest=fopen(fichier_dest,"wt");
+  if(fich_dest==NULL){
+    perror("Ouverture du fichier source : échec\n");
+    exit(1);
+  }
+
+  //initialisation des variables
+  unsigned long current;
+  mpz_t resultat;
+  mpz_init(resultat);
+  uint8_t tab4bytes[4]={0};
+
+  while (fscanf(fich_source, "%lu", &current)==1) {
+    //déchiffrement du uint32_t qui a été lu
+    dechiffrementBloc(resultat,(uint32_t)current,privateKey);
+
+    //conversion en 4 caractères
+    convertInt2uchar(mpz_get_ui(resultat),tab4bytes);
+
+    //écriture des caractères dans le fichier dest
+    for(int i=0;i<4;i++){
+      fprintf(fich_dest,"%c",tab4bytes[i]);
+    }
+  }
+
+  //fermeture des fichiers et libération mémoire du resultat
+  fclose(fich_source);
+  fclose(fich_dest);
+  mpz_clear(resultat);
+
 }
