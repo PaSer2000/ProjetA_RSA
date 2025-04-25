@@ -256,3 +256,48 @@ void test2Phase2(char* fichier_source,char* fichier_dest){
   
   printf("\n... Fin du test2 ... \n");
 }
+
+void test3Phase2(char* fichier_source,char* fichier_dest){
+  printf("\n... Lancement du test 3 ...\n\n");
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  /*Faire un deuxieme test pour les fonctions de chiffrement et déchiffrement de bloc*/
+  
+  printf("\n... Fin du test3 ... \n");
+}
+
+void test4Phase2(char* fichier_cle){
+  printf("\n... Lancement du test 4 ...\n\n");
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  /*chiffrement de la clé en hexa dans un fichier*/
+  exporterClePublique(fichier_cle,&publicKey);
+  printf("Ecriture des clés en hexa dans le fichier...\n");
+  system("cat cle_chiffree_hexa.txt");
+  printf("\n");
+
+  /*lecture de la cle en hexa dans le fichier*/
+  unsigned long exposant,modulo;
+  importerClePublique(fichier_cle,&exposant,&modulo);
+  printf("Lecture des clés dans le fichier...\n");
+  printf("Valeurs initiales -> e : %ld et n : %ld\n",publicKey.E,publicKey.N);
+  printf("Valeurs lues      -> e : %ld et n : %ld\n",exposant,modulo);
+  if(publicKey.E==exposant && publicKey.N==modulo){
+    printf("Test réussi : TRUE\n");
+  }else{
+    printf("Test réussi : FALSE\n");
+  }
+  printf("\n... Fin du test4 ... \n");
+}

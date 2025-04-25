@@ -67,5 +67,7 @@ void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey
 void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *privateKey);
 void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *publicKey);
 void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *privateKey);
+void exporterClePublique(char* fichier_out, rsaKey_t* publicKey);
+void importerClePublique(char* fichier_avec_cle,unsigned long* exposant,unsigned long* modulo);
 
 #endif
