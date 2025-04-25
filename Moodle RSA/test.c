@@ -7,8 +7,6 @@
 
 /* ------------------------ FONCTION DE TESTS PHASE1------------------------- */
 
-
-
 /******************* PARTIE 3.1.2 - PHASE 1.0 - affichage clés ********************* */
 
 void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[],int longueur){

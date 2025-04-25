@@ -586,6 +586,8 @@ Divers :
 
 */
 
+// 3
+
 void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n){
   mpz_t base,exposant,modulo;
 
@@ -602,6 +604,8 @@ void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n){
   mpz_clear(exposant);
   mpz_clear(modulo);
 }
+
+// 4a
 
 void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey){
   //public key composé de publicKey->E=exposant public et publicKey->N=produit de p et q
@@ -624,6 +628,8 @@ void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *priva
   //appel à la fonction
   puissance_mod_n_gmp(resultat,bloc_a_dechiffrer,d,n);
 }
+
+// 4b
 
 void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *publicKey){
 
@@ -676,6 +682,8 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
 
 }
 
+// 4c
+
 void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *privateKey){
   //ouverture des fichiers et controle des erreurs
   FILE* fich_source=fopen(fichier_source,"rb");
@@ -714,4 +722,18 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
   fclose(fich_dest);
   mpz_clear(resultat);
 
+}
+
+// 4d
+
+void exporterClePublique(char* fichier_out, rsaKey_t* publicKey) {
+  FILE* f = fopen(fichier_out, "w");
+  if (!f) {
+      perror("Erreur export clef");
+      exit(1);
+  }
+  // Export en hex UTF-8
+  fprintf(f, "e: %lx\n", publicKey->E);
+  fprintf(f, "n: %lx\n", publicKey->N);
+  fclose(f);
 }
