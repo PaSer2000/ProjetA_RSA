@@ -733,8 +733,8 @@ void exporterClePublique(char* fichier_out, rsaKey_t* publicKey) {
       exit(1);
   }
   // Export en hex UTF-8
-  fprintf(f, "e: %lx\n", publicKey->E);
-  fprintf(f, "n: %lx\n", publicKey->N);
+  fprintf(f, "e : %lx\n", publicKey->E);
+  fprintf(f, "n : %lx\n", publicKey->N);
   fclose(f);
 }
 
@@ -746,34 +746,29 @@ void importerClePublique(char* fichier_avec_cle,unsigned long* exposant,unsigned
   }
 
   //initialisation variables
-  char e,n,deuxpoints,retourLigne;
+  char e,n,deuxpoints;
 
   //on suppose que le fichier est construit de la même manière que la fn exporterClePublique
   //lecture de la première ligne avec l'exposant
-  e=fgetc(fich_cle);
-  deuxpoints=fgetc(fich_cle);
+  if(fscanf(fich_cle,"%c %c %lx\n",&e,&deuxpoints,exposant)!=3){
+    perror("Lecture exposant : erreur\n");
+    fclose(fich_cle);
+    exit(2);
+  }
   if(e!='e' || deuxpoints!=':'){
     perror("Format fichier incorrect (e): erreur\n");
     fclose(fich_cle);
     exit(2);
   }
-  if(fscanf(fich_cle, "%lx", exposant)!=1){
-    perror("Lecture exposant : erreur\n");
-    fclose(fich_cle);
-    exit(2);
-  }
 
   //lecture de la deuxieme ligne avec le modulo
-  retourLigne=fgetc(fich_cle);
-  n=fgetc(fich_cle);
-  deuxpoints=fgetc(fich_cle);
-  if(n!='n' || deuxpoints!=':' || retourLigne!='\n'){
-    perror("Format fichier incorrect (n): erreur\n");
+  if(fscanf(fich_cle,"%c %c %lx",&n,&deuxpoints,modulo)!=3){
+    perror("Lecture modulo : erreur\n");
     fclose(fich_cle);
     exit(2);
   }
-  if(fscanf(fich_cle,"%lx",modulo)!=1){
-    perror("Lecture modulo : erreur\n");
+  if(n!='n' || deuxpoints!=':'){
+    perror("Format fichier incorrect (n): erreur\n");
     fclose(fich_cle);
     exit(2);
   }
