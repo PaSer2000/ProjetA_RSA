@@ -21,7 +21,10 @@ int main() {
     /*INITIALISATION TEST FICHIER*/
     test2Phase2("irresistiblement.txt","irresistiblement_chiffre.txt");
 
-    test4Phase2("cle_chiffree_hexa.txt");
+    test3Phase2("cle_chiffree_hexa.txt");
 
-    test5Phase2();
+    test4Phase2();
+
+    test5Phase2("cle_chiffree_hexa.txt","message_Test_Phase2.txt");
+
   }

@@ -257,23 +257,9 @@ void test2Phase2(char* fichier_source,char* fichier_dest){
   printf("\n... Fin du test2 ... \n");
 }
 
-void test3Phase2(char* fichier_source,char* fichier_dest){
+
+void test3Phase2(char* fichier_cle){
   printf("\n... Lancement du test 3 ...\n\n");
-
-  /*Génération des clés*/
-  rsaKey_t publicKey, privateKey;
-  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
-
-  /*Affichage des clés*/
-  affichageClefs(&publicKey, &privateKey); 
-
-  /*Faire un deuxieme test pour les fonctions de chiffrement et déchiffrement de bloc*/
-  
-  printf("\n... Fin du test3 ... \n");
-}
-
-void test4Phase2(char* fichier_cle){
-  printf("\n... Lancement du test 4 ...\n\n");
 
   /*Génération des clés*/
   rsaKey_t publicKey, privateKey;
@@ -299,28 +285,87 @@ void test4Phase2(char* fichier_cle){
   }else{
     printf("Test réussi : FALSE\n");
   }
-  printf("\n... Fin du test4 ... \n");
+  printf("\n... Fin du test3 ... \n");
 }
 
-void test5Phase2() {
+void test4Phase2() {
 
-  printf("\n... Lancement du test 5 avec fichiers (base64) ...\n\n");
+  printf("\n... Lancement du test 4 avec fichiers (base64) ...\n\n");
 
   printf("Contenu du fichier à chiffrer:\n");
   system("cat message.txt");
   printf("\n");
 
   encode_file_base64("message.txt", "encoded.txt");
-  printf("Contenu du fichier chiffré:\n");
+  printf("\nContenu du fichier chiffré:\n");
   system("cat encoded.txt");
   printf("\n");
 
   decode_file_base64("encoded.txt", "decoded.txt");
-  printf("Contenu du fichier déchiffré:\n");
+  printf("\nContenu du fichier déchiffré:\n");
   system("cat decoded.txt");
   printf("\n");
 
 
-  printf("\n... Fin du test5 avec fichiers (base64) ... \n");
+  printf("\n... Fin du test4 avec fichiers (base64) ... \n");
 
+}
+
+void test5Phase2(char* fichier_cle,char* fichier_a_encoder){
+  printf("\n... Lancement du test 5 ...\n\n");
+
+  printf("*****Actions effectuées côté expéditeur de clé*****\n\n");
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  /*Export de la clé*/
+  printf("Ecriture de la clé publique en hexa dans un fichier...\n");
+  exporterClePublique(fichier_cle,&publicKey);
+  printf("*****Fin des actions de l'expéditeur de clé, début des actions de l'émetteur de message*****\n\n");
+
+  /*Récupération de la clé*/
+  printf("Le fichier %s contient la clé publique reçu en hexadécimal.\nContenu:\n",fichier_cle);
+  system("cat cle_chiffree_hexa.txt");
+  printf("\nOn exporte les clés ...\n\n");
+  unsigned long exposant,modulo;
+  importerClePublique(fichier_cle,&exposant,&modulo);
+  rsaKey_t cleLu;
+  cleLu.E=exposant;
+  cleLu.N=modulo;
+
+  /*Chiffrement du message*/
+  printf("Le fichier %s contient le message que l'on veut transmettre.\nContenu:\n",fichier_a_encoder);
+  system("cat message_Test_Phase2.txt");
+
+  printf("\n\nChiffrement du fichier...\n");
+  chiffrer_bloc_dans_fichier(fichier_a_encoder,"encoded_Test5.txt",&cleLu);
+  printf("Contenu du fichier chiffré:\n");
+  system("cat encoded_Test5.txt");
+
+  /*Conversion du message en base 64*/
+  printf("\nConversion en base64...\n");
+  encode_file_base64("encoded_Test5.txt", "encoded_test_b64.txt");
+  printf("Contenu du fichier en base64:\n");
+  system("cat encoded_test_b64.txt");
+
+  
+  printf("\n\n*****Actions effectuées côté récepteur de message*****\n");
+  printf("Le fichier encoded_test_b64.txt contient le message chiffré en base 64.\nConversion de base64 en binaire...\n");
+  printf("Contenu du fichier chiffré en binaire:\n");
+
+  /*Conversion de base 64 en binaire*/
+  decode_file_base64("encoded_test_b64.txt","decoded_test5.txt");
+  system("cat decoded_test5.txt");
+  
+  //printf("Dechiffrement du fichier...\nContenu du message totalement dechiffré:\n");
+  /*Conversion de binaire en texte*/ 
+  /*dechiffrer_bloc_dans_fichier("decoded_test6.txt","final_message.txt",&privateKey);
+  system("cat final_message.txt");
+  */
+  
+  printf("\n... Fin du test5 ... \n");
 }
