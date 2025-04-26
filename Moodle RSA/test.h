@@ -16,5 +16,6 @@ void test4fichiers();
 void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t bloc);
 void test2Phase2(char* fichier_source,char* fichier_dest);
 void test4Phase2(char* fichier_cle);
+void test5Phase2();
 
 #endif

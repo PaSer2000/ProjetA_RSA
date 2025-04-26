@@ -22,4 +22,6 @@ int main() {
     test2Phase2("irresistiblement.txt","irresistiblement_chiffre.txt");
 
     test4Phase2("cle_chiffree_hexa.txt");
+
+    test5Phase2();
   }

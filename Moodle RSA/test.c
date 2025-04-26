@@ -228,7 +228,7 @@ void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t 
   dechiffrementBloc(resultatDechiffrement,mpz_get_ui(resultatChiffrement),&privateKey);
   gmp_printf("  Bloc déchiffré  ----> %Zd\n", resultatDechiffrement);  
 
-  printf("\n\n... Fin du test1 ...\n");
+  printf("\n... Fin du test1 ...\n");
 }
 
 void test2Phase2(char* fichier_source,char* fichier_dest){
@@ -300,4 +300,27 @@ void test4Phase2(char* fichier_cle){
     printf("Test réussi : FALSE\n");
   }
   printf("\n... Fin du test4 ... \n");
+}
+
+void test5Phase2() {
+
+  printf("\n... Lancement du test 5 avec fichiers (base64) ...\n\n");
+
+  printf("Contenu du fichier à chiffrer:\n");
+  system("cat message.txt");
+  printf("\n");
+
+  encode_file_base64("message.txt", "encoded.txt");
+  printf("Contenu du fichier chiffré:\n");
+  system("cat encoded.txt");
+  printf("\n");
+
+  decode_file_base64("encoded.txt", "decoded.txt");
+  printf("Contenu du fichier déchiffré:\n");
+  system("cat decoded.txt");
+  printf("\n");
+
+
+  printf("\n... Fin du test5 avec fichiers (base64) ... \n");
+
 }
