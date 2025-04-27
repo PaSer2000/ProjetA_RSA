@@ -26,53 +26,36 @@ void genererPairCle()
 
 void convertBinaryTob64(char* in, char *out)
 {
-    printf("Les fichiers recup sont : %s et %s\n", in, out);
     // utiliser "testP3choix5.txt" pour In et "testP3choix5Out.txt" pour Out
-    char fichierIn[TAILLE_MAX_NOM_FICHIER];
-    char fichierOut[TAILLE_MAX_NOM_FICHIER];
     char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
-    fscanf(stdin, "%s", fichierIn);
-    clearBuffer();
-
-    fscanf(stdin, "%s", fichierOut);
-    clearBuffer();
-
-    printf("Convertissement de %s en base64 dans %s\n\n", fichierIn, fichierOut);
-    encode_file_base64(fichierIn, fichierOut);
+    printf("Convertissement de %s en base64 dans %s\n\n", in, out);
+    encode_file_base64(in, out);
 
     printf("Fichier original :\n");
-    sprintf(commande, "cat %s", fichierIn);
+    sprintf(commande, "cat %s", in);
     system(commande);
 
     printf("\n\nFichier encode en base 64 :\n");
-    sprintf(commande, "cat %s", fichierOut);
+    sprintf(commande, "cat %s", out);
     system(commande);
     printf("\n\n");
 }
 
-void convertb64ToBinary()
+void convertb64ToBinary(char *in, char *out)
 {
     // utiliser "testP3choix5Out.txt" pour In et "testP3choix6Out.txt" pour Out
-    char fichierIn[TAILLE_MAX_NOM_FICHIER];
-    char fichierOut[TAILLE_MAX_NOM_FICHIER];
     char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
-    fscanf(stdin, "%s", fichierIn);
-    clearBuffer();
-
-    fscanf(stdin, "%s", fichierOut);
-    clearBuffer();
-
-    printf("Convertissement de %s en binaire dans %s\n\n", fichierIn, fichierOut);
-    decode_file_base64(fichierIn, fichierOut);
+    printf("Convertissement de %s en binaire dans %s\n\n", in, out);
+    decode_file_base64(in, out);
 
     printf("Fichier original :\n");
-    sprintf(commande, "cat %s", fichierIn);
+    sprintf(commande, "cat %s", in);
     system(commande);
 
     printf("\n\nFichier decode en base 64 :\n");
-    sprintf(commande, "cat %s", fichierOut);
+    sprintf(commande, "cat %s", out);
     system(commande);
     printf("\n\n");
 }
@@ -84,12 +67,10 @@ int main()
     char quitter;
     do // boucle principale tant que l'utiisateur ne souhaite pas quitter l'interprete de commande
     {
-        printf("Bienvenue sur l'interprete de commande\n");
+        printf("===== Bienvenue sur l'interprete de commande =====\n");
 
-        fscanf(stdin, "%s", commande);
+        fgets(commande, TAILLE_MAX_COMMANDE, stdin);
         sscanf(commande, "%s", choix);
-        printf("Le choix est : %s", choix);
-        //clearBuffer();
 
         if (strcmp(choix, "leave") == 0)
         {
@@ -114,12 +95,14 @@ int main()
         else if(strcmp(choix, "bin-2b64") == 0){
             char in[TAILLE_MAX_NOM_FICHIER];
             char out[TAILLE_MAX_NOM_FICHIER];
-            sscanf(commande, "%s", in);
-            sscanf(commande, "%s", out);
+            sscanf(commande, "%s %s %s", choix, in, out);
             convertBinaryTob64(in, out);
         }
         else if(strcmp(choix, "b64-2bin") == 0){
-            convertb64ToBinary();
+            char in[TAILLE_MAX_NOM_FICHIER];
+            char out[TAILLE_MAX_NOM_FICHIER];
+            sscanf(commande, "%s %s %s", choix, in, out);
+            convertb64ToBinary(in, out);
         }
         else{
             printf("Entree invalide\n");
