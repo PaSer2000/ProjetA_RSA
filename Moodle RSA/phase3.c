@@ -5,6 +5,7 @@
 #include "rsa_common_header.h"
 #include <string.h>
 #define TAILLE_MAX_NOM_FICHIER 30
+#define TAILLE_MAX_COMMANDE 100
 
 void clearBuffer()
 {
@@ -13,6 +14,7 @@ void clearBuffer()
     while ((clean = getchar() != '\n') && clean != EOF)
         ;
 }
+
 void genererPairCle()
 {
     printf("Generation des clés publique et privee...\n");
@@ -22,20 +24,19 @@ void genererPairCle()
     affichageClefs(&publicKey, &privateKey);
 }
 
-void convertBinaryTob64()
+void convertBinaryTob64(char* in, char *out)
 {
+    printf("Les fichiers recup sont : %s et %s\n", in, out);
     // utiliser "testP3choix5.txt" pour In et "testP3choix5Out.txt" pour Out
     char fichierIn[TAILLE_MAX_NOM_FICHIER];
     char fichierOut[TAILLE_MAX_NOM_FICHIER];
     char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
-    printf("Entrez le fichier a chiffrer en base64: ");
     fscanf(stdin, "%s", fichierIn);
-
     clearBuffer();
 
-    printf("Entrez le fichier de destination : ");
     fscanf(stdin, "%s", fichierOut);
+    clearBuffer();
 
     printf("Convertissement de %s en base64 dans %s\n\n", fichierIn, fichierOut);
     encode_file_base64(fichierIn, fichierOut);
@@ -57,13 +58,11 @@ void convertb64ToBinary()
     char fichierOut[TAILLE_MAX_NOM_FICHIER];
     char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
-    printf("Entrez le fichier a dechiffrer en base64: ");
     fscanf(stdin, "%s", fichierIn);
-
     clearBuffer();
 
-    printf("Entrez le fichier de destination : ");
     fscanf(stdin, "%s", fichierOut);
+    clearBuffer();
 
     printf("Convertissement de %s en binaire dans %s\n\n", fichierIn, fichierOut);
     decode_file_base64(fichierIn, fichierOut);
@@ -80,65 +79,51 @@ void convertb64ToBinary()
 
 int main()
 {
-    int choix = -1;
+    char commande[TAILLE_MAX_COMMANDE];
+    char choix[50];
     char quitter;
     do // boucle principale tant que l'utiisateur ne souhaite pas quitter l'interprete de commande
     {
-        printf("Bienvenue sur le l'interprete de commande,\nquelle action souhaitez vous faire ?\n1. generer des paires de cles et leur associer un identificateur (table des symboles)\n2. chiffrer, dechiffrer avec les cles en utilisant l'identificateur associe\n3. supprimer des cles\n4. lister toutes les clefs\n5. convertir un fichier binaire en base64\n6. convertir un fichier base64 en binaire\n7. sauvegarde des cles dans un fichier\n8. Quitter le terminal\nVotre choix : ");
-        do // on boucle tant que le choix n'est pas valide
+        printf("Bienvenue sur l'interprete de commande\n");
+
+        fscanf(stdin, "%s", commande);
+        sscanf(commande, "%s", choix);
+        printf("Le choix est : %s", choix);
+        //clearBuffer();
+
+        if (strcmp(choix, "leave") == 0)
         {
-            fscanf(stdin, "%d", &choix);
-            if (choix < 1 || choix > 8)
+            printf("Voulez vous quitter le terminal ? y/n : ");
+            do
             {
-                printf("Erreur, entrez un nombre valide\nVotre choix : ");
-            }
-        } while (choix < 1 || choix > 8);
+                fscanf(stdin, "%c", &quitter);
+                clearBuffer();
+                if (quitter != 'y' && quitter != 'n')
+                {
+                    printf("Entrez 'y' ou 'n'\n");
+                }
 
-        printf("Vous avez choisi le choix numero %d\n", choix);
-
-        switch (choix)
-        {
-        case 1:
-            genererPairCle();
-            break;
-
-        case 2:
-            break;
-
-        case 3:
-            break;
-
-        case 4:
-            break;
-
-        case 5:
-            convertBinaryTob64();
-            break;
-
-        case 6:
-            convertb64ToBinary();
-            break;
-
-        case 7:
-            break;
-
-        case 8:
-            break;
+            } while (quitter != 'y' && quitter != 'n');
         }
-
-        clearBuffer();
-
-        printf("Voulez vous quitter le terminal ? y/n : ");
-        do
-        {
-            fflush(stdin);
-            fscanf(stdin, "%c", &quitter);
-            if (quitter != 'y' && quitter != 'n')
-            {
-                printf("Entrez 'y' ou 'n'\n");
-            }
-
-        } while (quitter != 'y' && quitter != 'n');
+        else if(strcmp(choix, "help") == 0){
+            printf("1. generer des paires de cles et leur associer un identificateur (table des symboles)\n2. chiffrer, dechiffrer avec les cles en utilisant l'identificateur associe\n3. supprimer des cles\n4. lister toutes les clefs\n5. convertir un fichier binaire en base64\n6. convertir un fichier base64 en binaire\n7. sauvegarde des cles dans un fichier\n8. Quitter le terminal\n");
+        }
+        else if(strcmp(choix, "newkeys") == 0){
+            genererPairCle();
+        }
+        else if(strcmp(choix, "bin-2b64") == 0){
+            char in[TAILLE_MAX_NOM_FICHIER];
+            char out[TAILLE_MAX_NOM_FICHIER];
+            sscanf(commande, "%s", in);
+            sscanf(commande, "%s", out);
+            convertBinaryTob64(in, out);
+        }
+        else if(strcmp(choix, "b64-2bin") == 0){
+            convertb64ToBinary();
+        }
+        else{
+            printf("Entree invalide\n");
+        }
 
     } while (quitter != 'y');
 }
