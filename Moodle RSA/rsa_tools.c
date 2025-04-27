@@ -464,6 +464,7 @@ void encode_file_base64(const char* input_filename, const char* output_filename)
   if (!input || !output) {
       if (input) fclose(input);
       if (output) fclose(output);
+      fprintf(stderr, "\n --- Erreur ouverture fichiers ---\n\n");
       return;
   }
 
