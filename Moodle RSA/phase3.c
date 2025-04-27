@@ -72,7 +72,7 @@ int main()
         fgets(commande, TAILLE_MAX_COMMANDE, stdin);
         sscanf(commande, "%s", choix);
 
-        if (strcmp(choix, "leave") == 0)
+        if (strcmp(choix, "quit") == 0)
         {
             printf("Voulez vous quitter le terminal ? y/n : ");
             do
