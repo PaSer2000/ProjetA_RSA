@@ -87,7 +87,7 @@ int main()
             } while (quitter != 'y' && quitter != 'n');
         }
         else if(strcmp(choix, "help") == 0){
-            printf("1. generer des paires de cles et leur associer un identificateur (table des symboles)\n2. chiffrer, dechiffrer avec les cles en utilisant l'identificateur associe\n3. supprimer des cles\n4. lister toutes les clefs\n5. convertir un fichier binaire en base64\n6. convertir un fichier base64 en binaire\n7. sauvegarde des cles dans un fichier\n8. Quitter le terminal\n");
+            printf("https://moodle.univ-tlse3.fr/pluginfile.php/1126789/mod_folder/content/0/interpre%%CC%%80te.pdf?forcedownload=1\n");
         }
         else if(strcmp(choix, "newkeys") == 0){
             genererPairCle();
