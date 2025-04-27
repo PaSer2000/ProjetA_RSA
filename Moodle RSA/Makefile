@@ -8,6 +8,7 @@ all: Executable
 #Cibles spécifiques à chaque phase
 phase1: phase1_exec
 phase2: phase2_exec
+phase 3: phase3_exec
 
 #Cibles spécifiques
 phase1_exec: rsa_tools.o phase1.o bezout.o test.o
@@ -15,6 +16,9 @@ phase1_exec: rsa_tools.o phase1.o bezout.o test.o
 
 phase2_exec: rsa_tools.o phase2.o bezout.o test.o int2char.o
 	$(CC) -o phase2_exec rsa_tools.o phase2.o bezout.o test.o int2char.o $(LDFLAGS)
+
+phase3_exec : rsa_tools.o phase3.o bezout.o int2char.o
+	$(CC) -o phase3_exec rsa_tools.o phase3.o bezout.o int2char.o $(LDFLAGS)
 
 Executable: rsa_tools.o phase1.o bezout.o test.o
 	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
@@ -28,6 +32,9 @@ phase1.o: phase1.c rsa_common_header.h test.h bezout.h
 
 phase2.o: phase2.c rsa_common_header.h test.h bezout.h
 	$(CC) $(CFLAGS) phase2.c
+
+phase3.o: phase3.c rsa_common_header.h 
+	$(CC) $(CFLAGS) phase3.c
 
 bezout.o: bezout.c bezout.h
 	$(CC) $(CFLAGS) bezout.c
