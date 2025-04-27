@@ -3,12 +3,15 @@
 ------------------------------------*/
 
 #include "rsa_common_header.h"
+#include <string.h>
+#define TAILLE_MAX_NOM_FICHIER 30
 
 void clearBuffer()
 {
     // Vidage de la memoire tampon pour clear stdin
     int clean;
-    while ((clean = getchar() != '\n') && clean != EOF);
+    while ((clean = getchar() != '\n') && clean != EOF)
+        ;
 }
 void genererPairCle()
 {
@@ -21,22 +24,58 @@ void genererPairCle()
 
 void convertBinaryTob64()
 {
-    //utiliser "testP3choix5.txt" pour In et testP3choix5Out.txt pour Out
-    char *fichierIn = NULL;
-    char *fichierOut = NULL;
+    // utiliser "testP3choix5.txt" pour In et "testP3choix5Out.txt" pour Out
+    char fichierIn[TAILLE_MAX_NOM_FICHIER];
+    char fichierOut[TAILLE_MAX_NOM_FICHIER];
+    char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
     printf("Entrez le fichier a chiffrer en base64: ");
     fscanf(stdin, "%s", fichierIn);
 
     clearBuffer();
 
-    printf("\nEntrez le fichier de destination : ");
+    printf("Entrez le fichier de destination : ");
     fscanf(stdin, "%s", fichierOut);
 
-    printf("Encodage du fichier en base64...\n");
+    printf("Convertissement de %s en base64 dans %s\n\n", fichierIn, fichierOut);
     encode_file_base64(fichierIn, fichierOut);
+
     printf("Fichier original :\n");
-    
+    sprintf(commande, "cat %s", fichierIn);
+    system(commande);
+
+    printf("\n\nFichier encode en base 64 :\n");
+    sprintf(commande, "cat %s", fichierOut);
+    system(commande);
+    printf("\n\n");
+}
+
+void convertb64ToBinary()
+{
+    // utiliser "testP3choix5Out.txt" pour In et "testP3choix6Out.txt" pour Out
+    char fichierIn[TAILLE_MAX_NOM_FICHIER];
+    char fichierOut[TAILLE_MAX_NOM_FICHIER];
+    char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
+
+    printf("Entrez le fichier a dechiffrer en base64: ");
+    fscanf(stdin, "%s", fichierIn);
+
+    clearBuffer();
+
+    printf("Entrez le fichier de destination : ");
+    fscanf(stdin, "%s", fichierOut);
+
+    printf("Convertissement de %s en binaire dans %s\n\n", fichierIn, fichierOut);
+    decode_file_base64(fichierIn, fichierOut);
+
+    printf("Fichier original :\n");
+    sprintf(commande, "cat %s", fichierIn);
+    system(commande);
+
+    printf("\n\nFichier decode en base 64 :\n");
+    sprintf(commande, "cat %s", fichierOut);
+    system(commande);
+    printf("\n\n");
 }
 
 int main()
@@ -77,6 +116,7 @@ int main()
             break;
 
         case 6:
+            convertb64ToBinary();
             break;
 
         case 7:
