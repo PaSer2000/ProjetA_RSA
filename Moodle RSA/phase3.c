@@ -4,6 +4,7 @@
 
 #include "rsa_common_header.h"
 #include <string.h>
+#include <unistd.h>
 #define TAILLE_MAX_NOM_FICHIER 30
 #define TAILLE_MAX_COMMANDE 100
 
@@ -20,77 +21,101 @@ typedef struct s_node{
     keyIdentifier* keyStruct;
 }node;
 
-
 typedef struct{
     node *sentinel;
     int size;
 }keysDynamicList;
 
-
-
+// Fonction pour créer la liste dynamique de clés
 keysDynamicList* list_create(void) {
-	keysDynamicList* l = malloc(sizeof(keysDynamicList));
-	l->size = 0;
-	l->sentinel = malloc(sizeof(node));
-	l->sentinel->next = l->sentinel;
-	l->sentinel->previous = l->sentinel;
-	return l;
+    keysDynamicList* l = malloc(sizeof(keysDynamicList));
+    l->size = 0;
+    l->sentinel = malloc(sizeof(node));
+    l->sentinel->next = l->sentinel;
+    l->sentinel->previous = l->sentinel;
+    return l;
 }
 
+// Fonction pour supprimer la liste dynamique de clés
 void list_delete(keysDynamicList** l) {
-	node* element;
-	while((*l)->sentinel->next != (*l)->sentinel){
-		element = (*l)->sentinel->next;
-		(*l)->sentinel->next = element->next;
+    node* element;
+    while((*l)->sentinel->next != (*l)->sentinel){
+        element = (*l)->sentinel->next;
+        (*l)->sentinel->next = element->next;
         free(element->keyStruct);
-		free(element);
-		(*l)->size -= 1;
-	}
-	free(((*l)->sentinel)); //ou element = (*l)-> sentinel et free(element)
-	free(*l);
-	*l=NULL;
+        free(element);
+        (*l)->size -= 1;
+    }
+    free((*l)->sentinel);
+    free(*l);
+    *l = NULL;
 }
 
-keyIdentifier* createNewKeys(rsaKey_t public, rsaKey_t private, int id){
+// Fonction pour créer une nouvelle clé
+keyIdentifier* createNewKeys(rsaKey_t public, rsaKey_t private, int id) {
     keyIdentifier *new = malloc(sizeof(keyIdentifier));
     new->id = id;
-    new ->private = private;
+    new->private = private;
     new->public = public;
     return new;
 }
 
+// Ajouter une clé à la liste
 keysDynamicList* list_push_back(keysDynamicList* l, keyIdentifier* keys) {
-	node* newElement = malloc(sizeof(node));
-	newElement->keyStruct = keys;
-	l->sentinel->previous->next = newElement;
-	newElement->next = l->sentinel;
-	newElement->previous = l->sentinel->previous;
-	l->sentinel->previous = newElement;
-	l->size += 1;
-	return l;
+    node* newElement = malloc(sizeof(node));
+    newElement->keyStruct = keys;
+    l->sentinel->previous->next = newElement;
+    newElement->next = l->sentinel;
+    newElement->previous = l->sentinel->previous;
+    l->sentinel->previous = newElement;
+    l->size += 1;
+    return l;
 }
 
+// Lister toutes les clés
 keysDynamicList* list_map(keysDynamicList* l) {
-	node* element = l->sentinel->next;
-	while (element != l->sentinel)
-	{
-		printf("Paire n° %d : ", element->keyStruct->id);
+    node* element = l->sentinel->next;
+    while (element != l->sentinel) {
+        printf("Paire n° %d : ", element->keyStruct->id);
         affichageClefs(&(element->keyStruct->public), &(element->keyStruct->private));
         element = element->next;
-	}
-	return l;
+    }
+    return l;
 }
 
-//--------------------------------------------------------------------------------------------------------------------
+// Supprimer une clé par son identifiant
+keysDynamicList* supprimerCle(keysDynamicList* l, int id) {
+    node* element = l->sentinel->next;
+    while (element != l->sentinel) {
+        if (element->keyStruct->id == id) {
+            element->previous->next = element->next;
+            element->next->previous = element->previous;
+            free(element->keyStruct);
+            free(element);
+            l->size -= 1;
+            return l;
+        }
+        element = element->next;
+    }
+    printf("Clé avec identifiant %d non trouvée.\n", id);
+    return l;
+}
 
-void clearBuffer()
-{
-    // Vidage de la memoire tampon pour clear stdin
+// Fonction de sauvegarde des clés dans un fichier sécurisé
+void sauvegarderCle(keysDynamicList* keyList, const char* filename) {
+    FILE* file = fopen(filename, "wb");
+    if (!file) {
+        printf("Erreur lors de l'ouverture du fichier.\n");
+        return;
+    }
+    fclose(file);
+}
+
+// Fonction de nettoyage du tampon d'entrée
+void clearBuffer() {
     int clean;
-    while ((clean = getchar() != '\n') && clean != EOF)
-        ;
+    while ((clean = getchar() != '\n') && clean != EOF);
 }
-
 void genererPairCle(keysDynamicList* keyList,int id)
 {
     printf("Generation des clés publique et privee...\n");
@@ -137,61 +162,80 @@ void convertb64ToBinary(char *in, char *out)
     system(commande);
     printf("\n\n");
 }
-
-int main()
-{
+int main() {
     keysDynamicList* mainKeyList = list_create();
     char commande[TAILLE_MAX_COMMANDE];
     char choix[50];
     char quitter;
-    do // boucle principale tant que l'utiisateur ne souhaite pas quitter l'interprete de commande
-    {
+    do {
         printf("===== Bienvenue sur l'interprete de commande =====\n");
+        printf("Que veux-tu faire ?\n");
+        printf("1-Quitter le terminal\n");
+        printf("2-Ouvrir l'aide ?\n");
+        printf("3-Générer une nouvelle clé ?\n");
+        printf("4-Convertir un fichier binaire en b64 ?\n");
+        printf("5-Convertir un fichier b64 en binaire ?\n");
+        printf("6-Supprimez une clé\n");
+        printf("7-Sauvegardez les clés\n");
 
         fgets(commande, TAILLE_MAX_COMMANDE, stdin);
         sscanf(commande, "%s", choix);
 
-        if (strcmp(choix, "quit") == 0)
-        {
-            printf("Voulez vous quitter le terminal ? y/n : ");
-            do
-            {
+        if (strcmp(choix, "1") == 0) {
+            printf("Voulez-vous quitter le terminal ? y/n : ");
+            do {
                 fscanf(stdin, "%c", &quitter);
                 clearBuffer();
-                if (quitter != 'y' && quitter != 'n')
-                {
+                if (quitter != 'y' && quitter != 'n') {
                     printf("Entrez 'y' ou 'n'\n");
                 }
-
             } while (quitter != 'y' && quitter != 'n');
         }
-        else if(strcmp(choix, "help") == 0){
+        else if (strcmp(choix, "2") == 0) {
             printf("https://moodle.univ-tlse3.fr/pluginfile.php/1126789/mod_folder/content/0/interpre%%CC%%80te.pdf?forcedownload=1\n");
         }
-        else if(strcmp(choix, "newkeys") == 0){
-            char idChar[10];
+        else if (strcmp(choix, "3") == 0) {
             int id;
-            sscanf(commande, "%s %s", choix, idChar);
-            id = atoi(idChar);
+            printf("Entrez l'identifiant de la clé : ");
+            fgets(commande, TAILLE_MAX_COMMANDE, stdin);
+            sscanf(commande, "%d", &id);
             genererPairCle(mainKeyList, id);
         }
-        else if(strcmp(choix, "bin-2b64") == 0){
-            char in[TAILLE_MAX_NOM_FICHIER];
-            char out[TAILLE_MAX_NOM_FICHIER];
-            sscanf(commande, "%s %s %s", choix, in, out);
-            convertBinaryTob64(in, out);
-        }
-        else if(strcmp(choix, "b64-2bin") == 0){
-            char in[TAILLE_MAX_NOM_FICHIER];
-            char out[TAILLE_MAX_NOM_FICHIER];
-            sscanf(commande, "%s %s %s", choix, in, out);
+        else if (strcmp(choix, "4") == 0) {
+            char in[TAILLE_MAX_NOM_FICHIER], out[TAILLE_MAX_NOM_FICHIER];
+            printf("Entrez le fichier d'entrée (binaire) : ");
+            fgets(in, TAILLE_MAX_NOM_FICHIER, stdin);
+            printf("Entrez le fichier de sortie (base64) : ");
+            fgets(out, TAILLE_MAX_NOM_FICHIER, stdin);
             convertb64ToBinary(in, out);
         }
-        else{
-            printf("Entree invalide\n");
+        else if (strcmp(choix, "5") == 0) {
+            char in[TAILLE_MAX_NOM_FICHIER], out[TAILLE_MAX_NOM_FICHIER];
+            printf("Entrez le fichier d'entrée (base64) : ");
+            fgets(in, TAILLE_MAX_NOM_FICHIER, stdin);
+            printf("Entrez le fichier de sortie (binaire) : ");
+            fgets(out, TAILLE_MAX_NOM_FICHIER, stdin);
+            convertb64ToBinary(in, out);
         }
-
+        else if (strcmp(choix, "6") == 0) {
+            int id;
+            printf("Entrez l'identifiant de la clé à supprimer : ");
+            fgets(commande, TAILLE_MAX_COMMANDE, stdin);
+            sscanf(commande, "%d", &id);
+            mainKeyList = supprimerCle(mainKeyList, id);
+        }
+        else if (strcmp(choix,"7") == 0) {
+            sauvegarderCle(mainKeyList, "clé.txt");
+        }
+        else {
+            printf("Entrée invalide\n");
+        }
+        sleep(1);
+        printf("\n\n\n\n");
     } while (quitter != 'y');
+    
     list_delete(&mainKeyList);
     printf("Exit success\n");
+
+    return 0;
 }
