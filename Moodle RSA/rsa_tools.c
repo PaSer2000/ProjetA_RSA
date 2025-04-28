@@ -635,7 +635,7 @@ void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *priva
 void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *publicKey){
 
   //ouverture des fichiers et controle des erreurs
-  FILE* fich_source=fopen(fichier_source,"rt");
+  FILE* fich_source=fopen(fichier_source,"rb");
   if(fich_source==NULL){
     perror("Ouverture du fichier source : échec\n");
     exit(1);
@@ -648,32 +648,23 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
   }
 
   //initialisation des variables
-  char current;
+  int nbLu;
   mpz_t resultat;
   mpz_init(resultat);
-  int nbOctets=0;
   uint8_t a_convertir[4]={0};
+  uint32_t res;
 
-  while ((current = fgetc(fich_source)) != EOF) {
-    //augmentation du nombre d'octets à chaque itération et stockage de la nouvelle valeur
-    a_convertir[nbOctets]=current;
-    nbOctets++;
-    
-    //si on a lu 4 caractères on les convertit en un uint32_t et on traite
-    if(nbOctets==4){
-      chiffrementBloc(resultat,convert_4byte2int(a_convertir),publicKey);
-      fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
-      nbOctets=0;
-    }
-  }
-
-  //traitement des octets restants
-  if(nbOctets>0){
-    for(int i=nbOctets;i<4;i++){
-      a_convertir[i]=0;
+  while ((nbLu=fread(a_convertir,sizeof(uint8_t),4,fich_source)) > 0) {
+    //si nbLu plus petit que 4 octets
+    if (nbLu<4) {
+      for (int i=nbLu; i<4; i++){
+        a_convertir[i]=0;
+      }
     }
     chiffrementBloc(resultat,convert_4byte2int(a_convertir),publicKey);
-    fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
+    //fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
+    res=(uint32_t)mpz_get_ui(resultat);
+    fwrite(&res,sizeof(uint32_t),1,fich_dest);
   }
 
   //fermeture des fichiers et libération mémoire du resultat
@@ -693,7 +684,7 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
     exit(1);
   }
 
-  FILE* fich_dest=fopen(fichier_dest,"wt");
+  FILE* fich_dest=fopen(fichier_dest,"wb");
   if(fich_dest==NULL){
     perror("Ouverture du fichier source : échec\n");
     exit(1);

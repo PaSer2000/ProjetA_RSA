@@ -231,6 +231,54 @@ void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t 
   printf("\n... Fin du test1 ...\n");
 }
 
+void test1bisPhase2(uint32_t val,uint8_t tab[]) {
+  printf("\n... Lancement du test 1 bis ...\n\n");
+  /*test conversion basique avec un élément*/
+  printf("Valeur initiale : %d\nConversion en tab de char...\n",val);
+  convertInt2uchar(val,tab);
+  printf("Reconversion en entier...\n");
+  printf("Valeur finale : %d\n\n",convert_4byte2int(tab));
+
+  /*test avec un tableau de valeurs*/
+  uint32_t tab_valeurs[5]={340,787,32,8888,0};
+
+  printf("Contenu du tableau :");
+  for(int i=0;i<5;i++) {
+    printf(" %d",tab_valeurs[i]);
+  }
+  printf("\n");
+
+  uint8_t en_uint8[4];  // Tableau de 4 octets pour chaque conversion
+  uint32_t retour;
+  for(int i=0;i<5;i++) {
+    printf("Conversion en tab de uint8_t de la valeur n°%d...\n",i);
+    convertInt2uchar(tab_valeurs[i],en_uint8);  // Passe un tableau de 4 octets
+    printf("Conversion de tab de uint8_t en uint32 de la valeur n°%d...\n",i);
+    retour=convert_4byte2int(en_uint8);  // Passe l'adresse du tableau
+    printf("Valeur finale retrouvée : %d\n",retour);
+  }
+
+  printf("\nTestons maintenant dans le sens inverse...\n");
+  /*init tableau*/
+  uint8_t tab_car[]={'p','r','o','j'};
+  printf("Caractères initiaux : ");
+  for(int i=0;i<4;i++){
+    printf("%c",tab_car[i]);
+  }
+  printf("\n");
+  printf("Conversion des caractères en int ...\n");
+  uint32_t res_en_int=convert_4byte2int(tab_car);
+
+  printf("Conversion de l'int en caractères ...\nResultat final: ");
+  uint8_t res_final[4];
+  convertInt2uchar(res_en_int,res_final);
+
+  for(int i=0;i<4;i++){
+    printf("%c",tab_car[i]);
+  }
+  printf("\n\n... Fin du test 1bis ...\n");
+}
+
 void test2Phase2(char* fichier_source,char* fichier_dest){
   printf("\n... Lancement du test 2 ...\n\n");
 

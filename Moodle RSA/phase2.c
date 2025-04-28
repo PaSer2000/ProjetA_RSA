@@ -18,6 +18,9 @@ int main() {
     mpz_clear(resultatChiffrement);
     mpz_clear(resultatDechiffrement);
 
+    uint8_t tab[4];
+    test1bisPhase2(343434,tab);
+
     /*INITIALISATION TEST FICHIER*/
     test2Phase2("irresistiblement.txt","irresistiblement_chiffre.txt");
 
@@ -26,11 +29,5 @@ int main() {
     test4Phase2();
 
     test5Phase2("cle_chiffree_hexa.txt","message_Test_Phase2.txt");
-
-    /*printf("TEST conversion uint32_t to char\n");
-    uint32_t testInt=3444444;
-    char tab[4];
-    convertInt2uchar(testInt,tab);
-    printf("%d\n",convert_4byte2int(tab));*/
 
   }

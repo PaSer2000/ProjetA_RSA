@@ -14,9 +14,9 @@ void test4fichiers();
 
 /******FONCTIONS DE TESTS PHASE 2******/
 void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t bloc);
+void test1bisPhase2(uint32_t val,uint8_t tab[]);
 void test2Phase2(char* fichier_source,char* fichier_dest);
 void test3Phase2(char* fichier_cle);
 void test4Phase2();
 void test5Phase2(char* fichier_cle,char* fichier_a_encoder);
-
 #endif
