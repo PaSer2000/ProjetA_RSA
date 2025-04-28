@@ -27,4 +27,10 @@ int main() {
 
     test5Phase2("cle_chiffree_hexa.txt","message_Test_Phase2.txt");
 
+    /*printf("TEST conversion uint32_t to char\n");
+    uint32_t testInt=3444444;
+    char tab[4];
+    convertInt2uchar(testInt,tab);
+    printf("%d\n",convert_4byte2int(tab));*/
+
   }

@@ -700,17 +700,17 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
   }
 
   //initialisation des variables
-  unsigned long current;
+  uint32_t current;
   mpz_t resultat;
   mpz_init(resultat);
   uint8_t tab4bytes[4]={0};
 
-  while (fscanf(fich_source, "%lu", &current)==1) {
+  while (fread(&current,sizeof(uint32_t),1,fich_source)==1) {
     //déchiffrement du uint32_t qui a été lu
-    dechiffrementBloc(resultat,(uint32_t)current,privateKey);
+    dechiffrementBloc(resultat,current,privateKey);
 
     //conversion en 4 caractères
-    convertInt2uchar(mpz_get_ui(resultat),tab4bytes);
+    convertInt2uchar((uint32_t)mpz_get_ui(resultat),tab4bytes);
 
     //écriture des caractères dans le fichier dest
     for(int i=0;i<4;i++){
