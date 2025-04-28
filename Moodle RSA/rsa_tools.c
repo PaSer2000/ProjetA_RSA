@@ -661,9 +661,14 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
         a_convertir[i]=0;
       }
     }
+    for(int i=0;i<4;i++){
+      printf("%c",a_convertir[i]);
+    }
+    printf("\n");
     chiffrementBloc(resultat,convert_4byte2int(a_convertir),publicKey);
     //fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
     res=(uint32_t)mpz_get_ui(resultat);
+    printf("res=%d\n",res);
     fwrite(&res,sizeof(uint32_t),1,fich_dest);
   }
 

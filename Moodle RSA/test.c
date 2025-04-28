@@ -417,3 +417,5 @@ void test5Phase2(char* fichier_cle,char* fichier_a_encoder){
   
   printf("\n... Fin du test5 ... \n");
 }
+
+

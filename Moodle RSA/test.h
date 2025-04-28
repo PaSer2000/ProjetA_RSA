@@ -19,4 +19,30 @@ void test2Phase2(char* fichier_source,char* fichier_dest);
 void test3Phase2(char* fichier_cle);
 void test4Phase2();
 void test5Phase2(char* fichier_cle,char* fichier_a_encoder);
+
+void test_intermittent(){
+    printf("\n... Lancement du test intermittent ...\n\n");
+
+  /*Génération des clés*/
+  rsaKey_t publicKey, privateKey;
+  genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
+
+  /*Affichage des clés*/
+  affichageClefs(&publicKey, &privateKey); 
+
+  printf("Contenu du fichier à chiffrer:\n");
+  system("cat message.txt");
+  printf("\n");
+
+  chiffrer_bloc_dans_fichier("message.txt","irresistiblement_chiffre.txt",&publicKey);
+  printf("\nContenu du fichier chiffré:\n");
+  system("cat irresistiblement_chiffre.txt");
+
+  dechiffrer_bloc_dans_fichier("irresistiblement_chiffre.txt","irresistiblement_vf.txt",&privateKey);
+  printf("\n\nContenu du fichier déchiffré:\n");
+  system("cat irresistiblement_vf.txt");
+  printf("\n");
+  
+  printf("\n... Fin du testintermittent ... \n");
+}
 #endif
