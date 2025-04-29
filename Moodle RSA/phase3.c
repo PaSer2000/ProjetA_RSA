@@ -148,16 +148,15 @@ void sauvegarderCle(keysDynamicList *keyList, char *filename, rsaKey_t public)
         return;
     }
     node *key = keyList->sentinel->next;
-        for (; key != keyList->sentinel; key = key->next)
-        {
-            printf("+ 1 key\n");
-            fprintf(file, "%d %lu %lu %lu\n",key->keyStruct->id ,key->keyStruct->public.N, key->keyStruct->public.E, key->keyStruct->private.E);
-        }
-
+    for (; key != keyList->sentinel; key = key->next)
+    {
+        printf("+ 1 key\n");
+        fprintf(file, "%d %lu %lu %lu\n", key->keyStruct->id, key->keyStruct->public.N, key->keyStruct->public.E, key->keyStruct->private.E);
+    }
 
     fclose(file);
     chiffrer_bloc_dans_fichier(filename, "cleChiffre.txt", &public);
-    //system("rm clé.txt"); marche mais vaut mieux garder clé.txt pour l'instant
+    // system("rm clé.txt"); marche mais vaut mieux garder clé.txt pour l'instant
 }
 
 // Fonction de nettoyage du tampon d'entrée
@@ -236,7 +235,8 @@ void convertb64ToBinary(char *in, char *out)
     printf("\n\n");
 }
 
-void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
+void extraireClesFromFile(keysDynamicList *list, char *fileName, rsaKey_t cle)
+{
     dechiffrer_bloc_dans_fichier(fileName, "cleDechiffre.txt", &cle);
     FILE *file = fopen("cleDechiffre.txt", "rb");
     if (!file)
@@ -246,13 +246,15 @@ void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
     }
     char ligneLue[TAILLE_MAX_COMMANDE];
     int id = 0;
-    uint64_t expPublic= 0;
-    uint64_t expPrive =0;
+    uint64_t expPublic = 0;
+    uint64_t expPrive = 0;
     uint64_t module = 0;
     rsaKey_t public, private;
-    while(fgets(ligneLue, TAILLE_MAX_COMMANDE, file) != NULL){
-        sscanf(ligneLue,"%d %lu %lu %lu", &id, &module, &expPublic, &expPrive);
-        if(noDouble(list, id)==0){
+    while (fgets(ligneLue, TAILLE_MAX_COMMANDE, file) != NULL)
+    {
+        sscanf(ligneLue, "%d %lu %lu %lu", &id, &module, &expPublic, &expPrive);
+        if (noDouble(list, id) == 0)
+        {
             printf("+1 cle loaded\n");
             public.N = module;
             public.E = expPublic;
@@ -260,7 +262,10 @@ void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
             private.E = expPrive;
             list_push_back(list, createNewKeys(public, private, id));
         }
-        else {printf("Error : Une cle porte deja l'identifiant %d, impossible d'importer depuis le fichier\n", id);}
+        else
+        {
+            printf("Error : Une cle porte deja l'identifiant %d, impossible d'importer depuis le fichier\n", id);
+        }
     }
 
     fclose(file);
@@ -273,7 +278,7 @@ int main()
     char choix[50];
     char quitter;
 
-    //Generation des cle utilsees pour le fichier qui stocke les cles du user 
+    // Generation des cle utilsees pour le fichier qui stocke les cles du user
     rsaKey_t mainPublicKey, mainPrivateKey;
     genKeysRabin(&mainPublicKey, &mainPrivateKey, MAX_PRIME);
 
@@ -307,13 +312,19 @@ int main()
         {
             int id;
             sscanf(commande, "%s %d", choix, &id);
-            if (noDouble(mainKeyList, id) == 0)
-            { // On vérifie qu'il n'y ai pas deja une cle avec cet id, pas de double
-                genererPairCle(mainKeyList, id);
-            }
-            else
+            if (id > 0)
             {
-                printf("Error : Une paire de cle porte deja cet identifiant\n");
+                if (noDouble(mainKeyList, id) == 0)
+                { // On vérifie qu'il n'y ai pas deja une cle avec cet id, pas de double
+                    genererPairCle(mainKeyList, id);
+                }
+                else
+                {
+                    printf("Error : Une paire de cle porte deja cet identifiant\n");
+                }
+            }
+            else{
+                printf("Error : Identifiant de cles <=0 interdit\n");
             }
         }
         else if (strcmp(choix, "bin-2b64") == 0)
@@ -374,7 +385,8 @@ int main()
                 dechiffrer_bloc_dans_fichier(in, out, &private);
             }
         }
-        else if (strcmp(choix, "load") == 0){
+        else if (strcmp(choix, "load") == 0)
+        {
             extraireClesFromFile(mainKeyList, "cleChiffre.txt", mainPrivateKey);
         }
         else
