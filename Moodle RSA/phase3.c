@@ -238,7 +238,7 @@ void convertb64ToBinary(char *in, char *out)
 
 void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
     dechiffrer_bloc_dans_fichier(fileName, "cleDechiffre.txt", &cle);
-    FILE *file = fopen("cleDechiffre.txt", "wb");
+    FILE *file = fopen("cleDechiffre.txt", "rb");
     if (!file)
     {
         printf("Erreur lors de l'ouverture du fichier cleDechiffre.txt.\n");
@@ -251,10 +251,8 @@ void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
     uint64_t module = 0;
     rsaKey_t public, private;
     while(fgets(ligneLue, TAILLE_MAX_COMMANDE, file) != NULL){
-        printf("GO !!!\n");
         sscanf(ligneLue,"%d %lu %lu %lu", &id, &module, &expPublic, &expPrive);
         if(noDouble(list, id)==0){
-            printf("+1 cle loaded\n");
             public.N = module;
             public.E = expPublic;
             private.N = module;
