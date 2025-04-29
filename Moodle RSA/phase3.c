@@ -139,7 +139,7 @@ keyIdentifier *getKeyWithID(keysDynamicList *list, int id)
 //--------------------------------------------------------------------------------------------------------------------
 
 // Fonction de sauvegarde des clés dans un fichier sécurisé
-void sauvegarderCle(keysDynamicList *keyList, const char *filename)
+void sauvegarderCle(keysDynamicList *keyList, char *filename, rsaKey_t public)
 {
     FILE *file = fopen(filename, "wb");
     if (!file)
@@ -147,7 +147,16 @@ void sauvegarderCle(keysDynamicList *keyList, const char *filename)
         printf("Erreur lors de l'ouverture du fichier.\n");
         return;
     }
+    node *key = keyList->sentinel->next;
+        for (; key != keyList->sentinel; key = key->next)
+        {
+            printf("+ 1 key\n");
+            fprintf(file, "%d %lu %lu %lu\n",key->keyStruct->id ,key->keyStruct->public.N, key->keyStruct->public.E, key->keyStruct->private.E);
+        }
+
+
     fclose(file);
+    chiffrer_bloc_dans_fichier(filename, "cleChiffre.txt", &public);
 }
 
 // Fonction de nettoyage du tampon d'entrée
@@ -231,6 +240,11 @@ int main()
     char commande[TAILLE_MAX_COMMANDE];
     char choix[50];
     char quitter;
+
+    //Generation des cle utilsees pour le fichier qui stocke les cles du user 
+    rsaKey_t mainPublicKey, mainPrivateKey;
+    genKeysRabin(&mainPublicKey, &mainPrivateKey, MAX_PRIME);
+
     printf("Commande help pour liste des commandes\n");
     do // boucle principale tant que l'utilisateur ne souhaite pas quitter l'interprete de commande
     {
@@ -292,7 +306,7 @@ int main()
         }
         else if (strcmp(choix, "save") == 0)
         {
-            sauvegarderCle(mainKeyList, "clé.txt");
+            sauvegarderCle(mainKeyList, "clé.txt", mainPublicKey);
         }
         else if (strcmp(choix, "listkeys") == 0)
         {

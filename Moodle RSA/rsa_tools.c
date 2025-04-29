@@ -207,7 +207,7 @@ void genKeysRabin(rsaKey_t *pubKey,rsaKey_t *privKey,uint64_t max_prime){
     /// \param[out] pubKey : clef publique
     /// \param[out] privKey : clef privée
 
-    printf(">>>Max=%lu\n",max_prime);
+    //printf(">>>Max=%lu\n",max_prime);
 
     int cpt1,cpt2;
     uint64_t num1 = genereUintRabin(max_prime,&cpt1);
