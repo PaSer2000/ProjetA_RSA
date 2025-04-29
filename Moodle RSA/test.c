@@ -391,7 +391,7 @@ void test5Phase2(char* fichier_cle,char* fichier_a_encoder){
   /*Récupération de la clé*/
   printf("Le fichier %s contient la clé publique reçu en hexadécimal.\nContenu:\n",fichier_cle);
   system("cat cle_chiffree_hexa.txt");
-  printf("\nOn exporte les clés ...\n\n");
+  printf("\nOn importe les clés ...\n\n");
   unsigned long exposant,modulo;
   importerClePublique(fichier_cle,&exposant,&modulo);
   rsaKey_t cleLu;
@@ -444,7 +444,7 @@ void test5Phase2(char* fichier_cle,char* fichier_a_encoder){
   
   printf("Dechiffrement du fichier...\nContenu du message totalement dechiffré:\n");
   /*Conversion de binaire en texte*/ 
-  dechiffrer_bloc_dans_fichier("decoded_test6.txt","final_message.txt",&privateKey);
+  dechiffrer_bloc_dans_fichier("decoded_test5.txt","final_message.txt",&privateKey);
   system("cat final_message.txt");
   
   

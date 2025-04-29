@@ -662,13 +662,14 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
         a_convertir[i]=' ';
       }
     }
-    printf("Valeur initiale : %u\n",convert_4byte2int(a_convertir));
     //on le stock dans un mpz_t
     uint32_t tmp=convert_4byte2int(a_convertir);
     mpz_set_ui(bloc_mpz,tmp);
+
+    //chiffrement
     chiffrementBloc(resultat,bloc_mpz,publicKey);
     
-    //conversion mpz en uint32_t
+    //conversion mpz en uint64_t
     res=mpz_get_ui(resultat);
     //ecriture dans le fichier
     fwrite(&res,sizeof(uint64_t),1,fich_dest);
