@@ -235,6 +235,37 @@ void convertb64ToBinary(char *in, char *out)
     system(commande);
     printf("\n\n");
 }
+
+void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
+    dechiffrer_bloc_dans_fichier(fileName, "cleDechiffre.txt", &cle);
+    FILE *file = fopen("cleDechiffre.txt", "wb");
+    if (!file)
+    {
+        printf("Erreur lors de l'ouverture du fichier cleDechiffre.txt.\n");
+        return;
+    }
+    char ligneLue[TAILLE_MAX_COMMANDE];
+    int id = 0;
+    uint64_t expPublic= 0;
+    uint64_t expPrive =0;
+    uint64_t module = 0;
+    rsaKey_t public, private;
+    while(fgets(ligneLue, TAILLE_MAX_COMMANDE, file) != NULL){
+        printf("GO !!!\n");
+        sscanf(ligneLue,"%d %lu %lu %lu", &id, &module, &expPublic, &expPrive);
+        if(noDouble(list, id)==0){
+            printf("+1 cle loaded\n");
+            public.N = module;
+            public.E = expPublic;
+            private.N = module;
+            private.E = expPrive;
+            list_push_back(list, createNewKeys(public, private, id));
+        }
+    }
+
+    fclose(file);
+}
+
 int main()
 {
     keysDynamicList *mainKeyList = list_create();
@@ -342,6 +373,9 @@ int main()
                 rsaKey_t private = keyStruct->private;
                 dechiffrer_bloc_dans_fichier(in, out, &private);
             }
+        }
+        else if (strcmp(choix, "load") == 0){
+            extraireClesFromFile(mainKeyList, "cleChiffre.txt", mainPrivateKey);
         }
         else
         {
