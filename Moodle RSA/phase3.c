@@ -8,7 +8,6 @@
 #define TAILLE_MAX_NOM_FICHIER 30
 #define TAILLE_MAX_COMMANDE 100
 
-
 //------------------------------------Structure dynamique pour stocker les clés---------------------------------------
 typedef struct
 {
@@ -30,7 +29,7 @@ typedef struct
     int size;
 } keysDynamicList;
 
-int noDouble(keysDynamicList *list, int id); //besoin car une fonction créee avant elle utilise noDouble
+int noDouble(keysDynamicList *list, int id); // besoin car une fonction créee avant elle utilise noDouble
 
 // Fonction pour créer la liste dynamique de clés
 keysDynamicList *list_create(void)
@@ -193,7 +192,7 @@ void listAllKeys(keysDynamicList *keyList)
 
 void convertBinaryTob64(char *in, char *out)
 {
-    // utiliser "testP3choix5.txt" pour In et "testP3choix5Out.txt" pour Out
+    // utiliser "P3test1.txt" pour In et "P3test2.txt" pour Out
     char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
     printf("Convertissement de %s en base64 dans %s\n\n", in, out);
@@ -211,7 +210,7 @@ void convertBinaryTob64(char *in, char *out)
 
 void convertb64ToBinary(char *in, char *out)
 {
-    // utiliser "testP3choix5Out.txt" pour In et "testP3choix6Out.txt" pour Out
+    // utiliser "P3test2.txt" pour In et "P3test3.txt" pour Out
     char commande[50]; // Pour l'utiliser dans la fonction "system" plus bas
 
     printf("Convertissement de %s en binaire dans %s\n\n", in, out);
@@ -265,7 +264,8 @@ int main()
             { // On vérifie qu'il n'y ai pas deja une cle avec cet id, pas de double
                 genererPairCle(mainKeyList, id);
             }
-            else{
+            else
+            {
                 printf("Error : Une paire de cle porte deja cet identifiant\n");
             }
         }
@@ -307,9 +307,12 @@ int main()
             char out[TAILLE_MAX_NOM_FICHIER];
             int idCle;
             sscanf(commande, "%s %s %s %d", choix, in, out, &idCle);
-            keyIdentifier* keyStruct = getKeyWithID(mainKeyList, idCle);
-            rsaKey_t public = keyStruct->public;
-            fichier_chiffrement(in, out, &public);
+            keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCle);
+            if (keyStruct != NULL)
+            {
+                rsaKey_t public = keyStruct->public;
+                fichier_chiffrement(in, out, &public);
+            }
         }
         else if (strcmp(choix, "uncrypt") == 0)
         {
@@ -317,9 +320,12 @@ int main()
             char out[TAILLE_MAX_NOM_FICHIER];
             int idCle;
             sscanf(commande, "%s %s %s %d", choix, in, out, &idCle);
-            keyIdentifier* keyStruct = getKeyWithID(mainKeyList, idCle);
-            rsaKey_t private = keyStruct->private;
-            fichier_dechiffrement(in, out, &private);
+            keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCle);
+            if (keyStruct != NULL)
+            {
+                rsaKey_t private = keyStruct->private;
+                fichier_dechiffrement(in, out, &private);
+            }
         }
         else
         {

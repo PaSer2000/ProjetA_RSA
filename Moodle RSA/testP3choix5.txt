@@ -1,2 +1,0 @@
-Ceci est le test de la pahse 3 pour l'encodage du fichier en base64
-1 2 3 4 5 

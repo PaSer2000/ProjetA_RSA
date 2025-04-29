@@ -321,14 +321,14 @@ void fichier_chiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *public
     FILE* fichAChiffrer=fopen(nomFich,"rt");
     if(fichAChiffrer==NULL){
       perror("Ouverture du fichier à chiffrer:erreur");
-      exit(1);
+      return;
     }
 
     //ouverture du fichier en écriture
     FILE* fichChiffre=fopen(nom_fichier_sortie,"wt");
     if(fichChiffre==NULL){
       perror("Ouverture fichier chiffrer résultat:erreur");
-      exit(2);
+      return;
     }
 
     //transformation de chaque caractère et écriture dans le fichier résultat
@@ -343,6 +343,7 @@ void fichier_chiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *public
 
     fclose(fichAChiffrer);
     fclose(fichChiffre);
+    printf("Le fichier %s a ete crypte dans %s\n", nomFich, nom_fichier_sortie);
 }
 
 void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *privateKey){
@@ -356,14 +357,14 @@ void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *priv
     FILE* fichADechiffrer=fopen(nomFich,"rt");
     if(fichADechiffrer==NULL){
       perror("Ouverture du fichier à déchiffrer:erreur");
-      exit(1);
+      return;
     }
 
     //ouverture du fichier en écriture
     FILE* fichDechiffre=fopen(nom_fichier_sortie,"wt");
     if(fichDechiffre==NULL){
       perror("Ouverture fichier déchiffré:erreur");
-      exit(2);
+      return;
     }
 
     //transformation de chaque caractère et écriture dans le fichier résultat
@@ -376,6 +377,7 @@ void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *priv
 
     fclose(fichADechiffrer);
     fclose(fichDechiffre);
+    printf("Le fichier %s a ete decrypte dans %s\n", nomFich, nom_fichier_sortie);
 }
 
 /************ PARTIE 3.1.5 - PHASE 1.3 - conversion base 64 *************/
