@@ -591,11 +591,10 @@ Divers :
 
 // 3
 
-void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n){
-  mpz_t base,exposant,modulo;
+void puissance_mod_n_gmp(mpz_t res,mpz_t base,uint64_t e,uint64_t n){
+  mpz_t exposant,modulo;
 
   //allocation et initalisation des variables utilisées avec GMP
-  mpz_init_set_ui(base, a);
   mpz_init_set_ui(exposant, e);
   mpz_init_set_ui(modulo, n);
 
@@ -603,14 +602,13 @@ void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n){
   mpz_powm(res,base,exposant,modulo);
 
   //libération des variables allouées
-  mpz_clear(base);
   mpz_clear(exposant);
   mpz_clear(modulo);
 }
 
 // 4a
 
-void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey){
+void chiffrementBloc(mpz_t resultat,mpz_t bloc_a_chiffrer,rsaKey_t *publicKey){
   //public key composé de publicKey->E=exposant public et publicKey->N=produit de p et q
 
   //identification de n et e pour faciliter la lisibilité
@@ -621,7 +619,7 @@ void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey
   puissance_mod_n_gmp(resultat,bloc_a_chiffrer,e,n);
 }
 
-void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *privateKey){
+void dechiffrementBloc(mpz_t resultat,mpz_t bloc_a_dechiffrer,rsaKey_t *privateKey){
   //private key composé de privateKey->E=exposant privé(d) et privateKey->N=n(produit de p et q)
 
   //identification de n et e pour faciliter la lisibilité
@@ -651,8 +649,9 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
 
   //initialisation des variables
   int nbLu;
-  mpz_t resultat;
+  mpz_t resultat,bloc_mpz;
   mpz_init(resultat);
+  mpz_init(bloc_mpz);
   uint8_t a_convertir[4]={0};
   uint32_t res;
 
@@ -663,14 +662,11 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
         a_convertir[i]=0;
       }
     }
-    for(int i=0;i<4;i++){
-      printf("%c",a_convertir[i]);
-    }
-    printf("\n");
-    chiffrementBloc(resultat,convert_4byte2int(a_convertir),publicKey);
+
+    mpz_set_ui(bloc_mpz,convert_4byte2int(a_convertir));
+    chiffrementBloc(resultat,bloc_mpz,publicKey);
     //fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
     res=(uint32_t)mpz_get_ui(resultat);
-    printf("res=%d\n",res);
     fwrite(&res,sizeof(uint32_t),1,fich_dest);
   }
 
@@ -678,7 +674,7 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
   fclose(fich_source);
   fclose(fich_dest);
   mpz_clear(resultat);
-
+  mpz_clear(bloc_mpz);
 }
 
 // 4c
@@ -699,13 +695,15 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
 
   //initialisation des variables
   uint32_t current;
-  mpz_t resultat;
+  mpz_t resultat,bloc_mpz;
   mpz_init(resultat);
+  mpz_init(bloc_mpz);
   uint8_t tab4bytes[4]={0};
 
   while (fread(&current,sizeof(uint32_t),1,fich_source)==1) {
+    mpz_set_ui(bloc_mpz,current);
     //déchiffrement du uint32_t qui a été lu
-    dechiffrementBloc(resultat,current,privateKey);
+    dechiffrementBloc(resultat,bloc_mpz,privateKey);
 
     //conversion en 4 caractères
     convertInt2uchar((uint32_t)mpz_get_ui(resultat),tab4bytes);
@@ -720,6 +718,7 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
   fclose(fich_source);
   fclose(fich_dest);
   mpz_clear(resultat);
+  mpz_clear(bloc_mpz);
 
 }
 

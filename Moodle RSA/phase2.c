@@ -8,7 +8,7 @@
 int main() {     
     /*INITIALISATION DES VARIABLES POUR LES TESTS DE BLOCS*/
     mpz_t resultatChiffrement, resultatDechiffrement;
-    uint32_t bloc = 176;
+    uint32_t bloc = 3477790;
     mpz_init(resultatChiffrement);
     mpz_init(resultatDechiffrement);
 

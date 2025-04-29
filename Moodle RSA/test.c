@@ -220,12 +220,16 @@ void test1Phase2(mpz_t resultatChiffrement,mpz_t resultatDechiffrement,uint32_t 
   /*Tableau initial */
   printf("  Bloc à chiffrer ----> %d\n",bloc);
 
+  // conversion de bloc (uint32_t) en mpz_t
+  mpz_t bloc_mpz;
+  mpz_init_set_ui(bloc_mpz, bloc);
+
   /*Chiffrement du tableau*/
-  chiffrementBloc(resultatChiffrement,bloc,&publicKey);
+  chiffrementBloc(resultatChiffrement,bloc_mpz,&publicKey);
   gmp_printf("  Bloc chiffré    ----> %Zd\n", resultatChiffrement); 
 
   /*Déchiffrement du tableau*/
-  dechiffrementBloc(resultatDechiffrement,mpz_get_ui(resultatChiffrement),&privateKey);
+  dechiffrementBloc(resultatDechiffrement,resultatChiffrement,&privateKey);
   gmp_printf("  Bloc déchiffré  ----> %Zd\n", resultatDechiffrement);  
 
   printf("\n... Fin du test1 ...\n");

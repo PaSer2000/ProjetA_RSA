@@ -62,9 +62,9 @@ void encode_file_base64(const char* input_filename, const char* output_filename)
 void decode_file_base64(const char* input_filename, const char* output_filename);
 
 /*---------------FONCTION PHASE 2--------------*/
-void puissance_mod_n_gmp(mpz_t res,uint64_t a,uint64_t e,uint64_t n);
-void chiffrementBloc(mpz_t resultat,uint32_t bloc_a_chiffrer,rsaKey_t *publicKey);
-void dechiffrementBloc(mpz_t resultat,uint32_t bloc_a_dechiffrer,rsaKey_t *privateKey);
+void puissance_mod_n_gmp(mpz_t res,mpz_t base,uint64_t e,uint64_t n);
+void chiffrementBloc(mpz_t resultat,mpz_t bloc_a_chiffrer,rsaKey_t *publicKey);
+void dechiffrementBloc(mpz_t resultat,mpz_t bloc_a_dechiffrer,rsaKey_t *privateKey);
 void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *publicKey);
 void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *privateKey);
 void exporterClePublique(char* fichier_out, rsaKey_t* publicKey);
