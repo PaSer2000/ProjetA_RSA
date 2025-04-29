@@ -652,26 +652,26 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
   mpz_t resultat,bloc_mpz;
   mpz_init(resultat);
   mpz_init(bloc_mpz);
-  uint32_t res;
+  uint64_t res;
   uint8_t a_convertir[4]={0};
 
   while ((nbLu=fread(a_convertir,sizeof(uint8_t),4,fich_source)) > 0) {
     //si nbLu plus petit que 4 octets
     if (nbLu<4) {
       for (int i=nbLu; i<4; i++){
-        a_convertir[i]=0;
+        a_convertir[i]=' ';
       }
     }
-
+    printf("Valeur initiale : %u\n",convert_4byte2int(a_convertir));
     //on le stock dans un mpz_t
-    mpz_set_ui(bloc_mpz,convert_4byte2int(a_convertir));
+    uint32_t tmp=convert_4byte2int(a_convertir);
+    mpz_set_ui(bloc_mpz,tmp);
     chiffrementBloc(resultat,bloc_mpz,publicKey);
     
     //conversion mpz en uint32_t
-    res=(uint32_t)mpz_get_ui(resultat);
-
+    res=mpz_get_ui(resultat);
     //ecriture dans le fichier
-    fwrite(&res,sizeof(uint32_t),1,fich_dest);
+    fwrite(&res,sizeof(uint64_t),1,fich_dest);
   }
 
   //fermeture des fichiers et libération mémoire du resultat
@@ -698,14 +698,14 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
   }
 
   //initialisation des variables
-  uint32_t current;
+  uint64_t current;
   mpz_t resultat,bloc_mpz;
   mpz_init(resultat);
   mpz_init(bloc_mpz);
   uint8_t tab4bytes[4]={0};
 
 
-  while (fread(&current, sizeof(uint32_t), 1, fich_source) == 1) {
+  while (fread(&current, sizeof(uint64_t), 1, fich_source) == 1) {
     //conversion uint32_t en mpz_t
     mpz_set_ui(bloc_mpz,current);
 

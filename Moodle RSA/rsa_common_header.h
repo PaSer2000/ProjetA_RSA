@@ -14,7 +14,7 @@
 #include <gmp.h>
 
 #define BLOCK_SIZE 4 // en octets
-#define MAX_PRIME 10000//00000000000000 //1*10^18
+#define MAX_PRIME 1000000000000000000 //1*10^18
 // avec GMP on peut gérer de plus grands nombres
 #define BLOCK_BASE_64 12 // caractères
 #define NAME_MAX_SIZE 32 // caractères

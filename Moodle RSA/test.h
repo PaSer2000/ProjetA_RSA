@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "rsa_common_header.h"
+#include "int2char.h"
 
 /******FONCTIONS DE TESTS PHASE 1******/
 void test1(uint8_t tab_a_chiffrer[],uint64_t tab_chiffre[],uint64_t tab_dechiffre[],int longueur);
@@ -36,13 +37,28 @@ void test_intermittent(){
 
   chiffrer_bloc_dans_fichier("message.txt","irresistiblement_chiffre.txt",&publicKey);
   printf("\nContenu du fichier chiffré:\n");
-  system("cat irresistiblement_chiffre.txt");
+
 
   dechiffrer_bloc_dans_fichier("irresistiblement_chiffre.txt","irresistiblement_vf.txt",&privateKey);
   printf("\n\nContenu du fichier déchiffré:\n");
   system("cat irresistiblement_vf.txt");
   printf("\n");
   
+  uint8_t tab[4]={'I','r','r','e'};
+  uint32_t res=convert_4byte2int(tab);
+  printf("%d\n",res);
+  mpz_t resu,bloc;
+  mpz_init(resu);
+  mpz_init(bloc);
+  mpz_set_ui(bloc,res);
+  chiffrementBloc(resu,bloc,&publicKey);
+  printf("inter**Veleur lue à dechiffre : %d\n",(uint32_t)mpz_get_ui(resu));
+  dechiffrementBloc(resu,resu,&privateKey);
+  printf("inter**Valeur dechiffree:%d\n",(uint32_t)mpz_get_ui(resu));
+  convertInt2uchar((uint32_t)mpz_get_ui(resu),tab);
+  for(int i=0;i<4;i++){
+    printf("%c",tab[i]);
+  }
   printf("\n... Fin du testintermittent ... \n");
 }
 #endif
