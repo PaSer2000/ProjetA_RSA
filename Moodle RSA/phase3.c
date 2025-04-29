@@ -305,9 +305,9 @@ int main()
         {
             char in[TAILLE_MAX_NOM_FICHIER];
             char out[TAILLE_MAX_NOM_FICHIER];
-            int idCle;
-            sscanf(commande, "%s %s %s %d", choix, in, out, &idCle);
-            keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCle);
+            int idCleCrypt = -1;
+            sscanf(commande, "%s %s %s %d", choix, in, out, &idCleCrypt);
+            keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCleCrypt);
             if (keyStruct != NULL)
             {
                 rsaKey_t public = keyStruct->public;
@@ -318,9 +318,9 @@ int main()
         {
             char in[TAILLE_MAX_NOM_FICHIER];
             char out[TAILLE_MAX_NOM_FICHIER];
-            int idCle;
-            sscanf(commande, "%s %s %s %d", choix, in, out, &idCle);
-            keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCle);
+            int idCleUncrypt = -1;
+            sscanf(commande, "%s %s %s %d", choix, in, out, &idCleUncrypt);
+            keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCleUncrypt);
             if (keyStruct != NULL)
             {
                 rsaKey_t private = keyStruct->private;
