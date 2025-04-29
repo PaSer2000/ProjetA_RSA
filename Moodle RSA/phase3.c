@@ -231,7 +231,7 @@ int main()
     char commande[TAILLE_MAX_COMMANDE];
     char choix[50];
     char quitter;
-    do // boucle principale tant que l'utiisateur ne souhaite pas quitter l'interprete de commande
+    do // boucle principale tant que l'utilisateur ne souhaite pas quitter l'interprete de commande
     {
         printf("===== Bienvenue sur l'interprete de commande =====\n");
 
