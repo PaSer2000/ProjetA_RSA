@@ -11,8 +11,8 @@ phase2: phase2_exec
 phase 3: phase3_exec
 
 #Cibles spécifiques
-phase1_exec: rsa_tools.o phase1.o bezout.o test.o
-	$(CC) -o phase1_exec rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
+phase1_exec: rsa_tools.o phase1.o bezout.o test.o int2char.o
+	$(CC) -o phase1_exec rsa_tools.o phase1.o bezout.o test.o int2char.o $(LDFLAGS)
 
 phase2_exec: rsa_tools.o phase2.o bezout.o test.o int2char.o
 	$(CC) -o phase2_exec rsa_tools.o phase2.o bezout.o test.o int2char.o $(LDFLAGS)
