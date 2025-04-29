@@ -260,6 +260,7 @@ void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
             private.E = expPrive;
             list_push_back(list, createNewKeys(public, private, id));
         }
+        else {printf("Error : Une cle porte deja l'identifiant %d, impossible d'importer depuis le fichier\n", id);}
     }
 
     fclose(file);
