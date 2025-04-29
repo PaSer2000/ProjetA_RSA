@@ -311,7 +311,7 @@ int main()
             if (keyStruct != NULL)
             {
                 rsaKey_t public = keyStruct->public;
-                fichier_chiffrement(in, out, &public);
+                chiffrer_bloc_dans_fichier(in, out, &public);
             }
         }
         else if (strcmp(choix, "uncrypt") == 0)
@@ -324,7 +324,7 @@ int main()
             if (keyStruct != NULL)
             {
                 rsaKey_t private = keyStruct->private;
-                fichier_dechiffrement(in, out, &private);
+                dechiffrer_bloc_dans_fichier(in, out, &private);
             }
         }
         else

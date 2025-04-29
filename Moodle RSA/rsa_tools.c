@@ -353,6 +353,7 @@ void fichier_dechiffrement(char* nomFich,char* nom_fichier_sortie,rsaKey_t *priv
     uint64_t n=privateKey->N;
     uint64_t d=privateKey->E;
 
+
     //ouverture du fichier en lecture
     FILE* fichADechiffrer=fopen(nomFich,"rt");
     if(fichADechiffrer==NULL){
@@ -680,6 +681,7 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
   fclose(fich_dest);
   mpz_clear(resultat);
   mpz_clear(bloc_mpz);
+  printf("Le fichier %s a ete crypte dans %s\n", fichier_source, fichier_dest);
 }
 
 // 4c
@@ -723,7 +725,7 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
   fclose(fich_dest);
   mpz_clear(resultat);
   mpz_clear(bloc_mpz);
-
+  printf("Le fichier %s a ete decrypte dans %s\n", fichier_source, fichier_dest);
 }
 
 // 4d
