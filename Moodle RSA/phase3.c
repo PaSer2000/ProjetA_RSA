@@ -33,6 +33,7 @@ keysDynamicList* list_create(void) {
     l->sentinel = malloc(sizeof(node));
     l->sentinel->next = l->sentinel;
     l->sentinel->previous = l->sentinel;
+    l->sentinel->keyStruct = NULL;
     return l;
 }
 
@@ -76,8 +77,9 @@ keysDynamicList* list_push_back(keysDynamicList* l, keyIdentifier* keys) {
 keysDynamicList* list_map(keysDynamicList* l) {
     node* element = l->sentinel->next;
     while (element != l->sentinel) {
-        printf("Paire n° %d : ", element->keyStruct->id);
+        printf("\n----------\nPaire n° %d : ", element->keyStruct->id);
         affichageClefs(&(element->keyStruct->public), &(element->keyStruct->private));
+        printf("\n");
         element = element->next;
     }
     return l;
@@ -90,6 +92,7 @@ keysDynamicList* supprimerCle(keysDynamicList* l, int id) {
         if (element->keyStruct->id == id) {
             element->previous->next = element->next;
             element->next->previous = element->previous;
+            printf("Suppression de la paire n°%d\n", element->keyStruct->id);
             free(element->keyStruct);
             free(element);
             l->size -= 1;
@@ -100,6 +103,8 @@ keysDynamicList* supprimerCle(keysDynamicList* l, int id) {
     printf("Clé avec identifiant %d non trouvée.\n", id);
     return l;
 }
+
+//--------------------------------------------------------------------------------------------------------------------
 
 // Fonction de sauvegarde des clés dans un fichier sécurisé
 void sauvegarderCle(keysDynamicList* keyList, const char* filename) {
@@ -121,10 +126,30 @@ void genererPairCle(keysDynamicList* keyList,int id)
     printf("Generation des clés publique et privee...\n");
     rsaKey_t publicKey, privateKey;
     genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
-    printf("La paire de cle a ete generee :\n");
+    printf("La paire de cle n°%d a ete generee :\n", id);
     affichageClefs(&publicKey, &privateKey);
     list_push_back(keyList, createNewKeys(publicKey, privateKey,id));
-    list_map(keyList);
+    
+}
+
+int noDouble(keysDynamicList* list,int id){
+    node* key = list->sentinel->next; 
+    for(; key != list->sentinel; key=key->next){
+        if(key->keyStruct->id == id){
+            printf("Error : Une paire de cle porte deja cet identifiant\n");
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void listAllKeys(keysDynamicList* keyList){
+    if(keyList->size>0){
+        list_map(keyList);
+        return;
+    }
+    printf("Aucune paire de cle stockees\n");
+    
 }
 
 void convertBinaryTob64(char* in, char *out)
@@ -167,71 +192,67 @@ int main() {
     char commande[TAILLE_MAX_COMMANDE];
     char choix[50];
     char quitter;
-    do {
+    do // boucle principale tant que l'utiisateur ne souhaite pas quitter l'interprete de commande
+    {
         printf("===== Bienvenue sur l'interprete de commande =====\n");
-        printf("Que veux-tu faire ?\n");
-        printf("1-Quitter le terminal\n");
-        printf("2-Ouvrir l'aide ?\n");
-        printf("3-Générer une nouvelle clé ?\n");
-        printf("4-Convertir un fichier binaire en b64 ?\n");
-        printf("5-Convertir un fichier b64 en binaire ?\n");
-        printf("6-Supprimez une clé\n");
-        printf("7-Sauvegardez les clés\n");
 
         fgets(commande, TAILLE_MAX_COMMANDE, stdin);
         sscanf(commande, "%s", choix);
 
-        if (strcmp(choix, "1") == 0) {
-            printf("Voulez-vous quitter le terminal ? y/n : ");
-            do {
+        if (strcmp(choix, "quit") == 0)
+        {
+            printf("Voulez vous quitter le terminal ? y/n : ");
+            do
+            {
                 fscanf(stdin, "%c", &quitter);
                 clearBuffer();
-                if (quitter != 'y' && quitter != 'n') {
+                if (quitter != 'y' && quitter != 'n')
+                {
                     printf("Entrez 'y' ou 'n'\n");
                 }
+
             } while (quitter != 'y' && quitter != 'n');
         }
-        else if (strcmp(choix, "2") == 0) {
+        else if(strcmp(choix, "help") == 0){
             printf("https://moodle.univ-tlse3.fr/pluginfile.php/1126789/mod_folder/content/0/interpre%%CC%%80te.pdf?forcedownload=1\n");
         }
-        else if (strcmp(choix, "3") == 0) {
+        else if(strcmp(choix, "newkeys") == 0){
             int id;
-            printf("Entrez l'identifiant de la clé : ");
-            fgets(commande, TAILLE_MAX_COMMANDE, stdin);
-            sscanf(commande, "%d", &id);
-            genererPairCle(mainKeyList, id);
+            sscanf(commande, "%s %d", choix, &id);
+            if(noDouble(mainKeyList, id) == 0){ //On vérifie qu'il n'y ai pas deja une cle avec cet id, pas de double
+                genererPairCle(mainKeyList, id);
+            }
+            
         }
-        else if (strcmp(choix, "4") == 0) {
-            char in[TAILLE_MAX_NOM_FICHIER], out[TAILLE_MAX_NOM_FICHIER];
-            printf("Entrez le fichier d'entrée (binaire) : ");
-            fgets(in, TAILLE_MAX_NOM_FICHIER, stdin);
-            printf("Entrez le fichier de sortie (base64) : ");
-            fgets(out, TAILLE_MAX_NOM_FICHIER, stdin);
+        else if(strcmp(choix, "bin-2b64") == 0){
+            char in[TAILLE_MAX_NOM_FICHIER];
+            char out[TAILLE_MAX_NOM_FICHIER];
+            sscanf(commande, "%s %s %s", choix, in, out);
+            convertBinaryTob64(in, out);
+        }
+        else if(strcmp(choix, "b64-2bin") == 0){
+            char in[TAILLE_MAX_NOM_FICHIER];
+            char out[TAILLE_MAX_NOM_FICHIER];
+            sscanf(commande, "%s %s %s", choix, in, out);
             convertb64ToBinary(in, out);
         }
-        else if (strcmp(choix, "5") == 0) {
-            char in[TAILLE_MAX_NOM_FICHIER], out[TAILLE_MAX_NOM_FICHIER];
-            printf("Entrez le fichier d'entrée (base64) : ");
-            fgets(in, TAILLE_MAX_NOM_FICHIER, stdin);
-            printf("Entrez le fichier de sortie (binaire) : ");
-            fgets(out, TAILLE_MAX_NOM_FICHIER, stdin);
-            convertb64ToBinary(in, out);
+        else if(strcmp(choix, "rmkeys") == 0){
+            int idCmp;
+            sscanf(commande, "%s %d", choix, &idCmp);
+            mainKeyList = supprimerCle(mainKeyList, idCmp);
         }
-        else if (strcmp(choix, "6") == 0) {
-            int id;
-            printf("Entrez l'identifiant de la clé à supprimer : ");
-            fgets(commande, TAILLE_MAX_COMMANDE, stdin);
-            sscanf(commande, "%d", &id);
-            mainKeyList = supprimerCle(mainKeyList, id);
-        }
-        else if (strcmp(choix,"7") == 0) {
+        else if(strcmp(choix, "save") == 0){
             sauvegarderCle(mainKeyList, "clé.txt");
         }
-        else {
-            printf("Entrée invalide\n");
+        else if(strcmp(choix, "listkeys") == 0){
+            listAllKeys(mainKeyList);
         }
-        sleep(1);
-        printf("\n\n\n\n");
+        else if(strcmp(choix, "clear") == 0){
+            system("clear");
+        }
+        else{
+            printf("Entree invalide\n");
+        }
     } while (quitter != 'y');
     
     list_delete(&mainKeyList);
