@@ -253,6 +253,7 @@ void extraireClesFromFile(keysDynamicList* list, char* fileName, rsaKey_t cle){
     while(fgets(ligneLue, TAILLE_MAX_COMMANDE, file) != NULL){
         sscanf(ligneLue,"%d %lu %lu %lu", &id, &module, &expPublic, &expPrive);
         if(noDouble(list, id)==0){
+            printf("+1 cle loaded\n");
             public.N = module;
             public.E = expPublic;
             private.N = module;
