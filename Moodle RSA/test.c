@@ -299,13 +299,22 @@ void test2Phase2(char* fichier_source,char* fichier_dest){
 
   chiffrer_bloc_dans_fichier(fichier_source,fichier_dest,&publicKey);
   printf("\nContenu du fichier chiffré:\n");
-  system("cat irresistiblement_chiffre.txt");
+  FILE *f = fopen("irresistiblement_chiffre.txt", "rb");
+  if (f) {
+    uint32_t value;
+    while (fread(&value, sizeof(uint32_t), 1, f) == 1) {
+        printf("%u ", value);  // Affiche la valeur entière
+    }
+    fclose(f);
+    printf("\n");
+  } else {
+    perror("Erreur à l'ouverture du fichier chiffré");
+  }
 
   dechiffrer_bloc_dans_fichier("irresistiblement_chiffre.txt","irresistiblement_vf.txt",&privateKey);
   printf("\n\nContenu du fichier déchiffré:\n");
   system("cat irresistiblement_vf.txt");
   printf("\n");
-  
   printf("\n... Fin du test2 ... \n");
 }
 
@@ -396,7 +405,17 @@ void test5Phase2(char* fichier_cle,char* fichier_a_encoder){
   printf("\n\nChiffrement du fichier...\n");
   chiffrer_bloc_dans_fichier(fichier_a_encoder,"encoded_Test5.txt",&cleLu);
   printf("Contenu du fichier chiffré:\n");
-  system("cat encoded_Test5.txt");
+  FILE *f = fopen("encoded_Test5.txt", "rb");
+  if (f) {
+    uint32_t value;
+    while (fread(&value, sizeof(uint32_t), 1, f) == 1) {
+        printf("%u ", value);  // Affiche la valeur entière
+    }
+    fclose(f);
+    printf("\n");
+  } else {
+    perror("Erreur à l'ouverture du fichier chiffré");
+  }
 
   /*Conversion du message en base 64*/
   printf("\nConversion en base64...\n");
@@ -411,13 +430,23 @@ void test5Phase2(char* fichier_cle,char* fichier_a_encoder){
 
   /*Conversion de base 64 en binaire*/
   decode_file_base64("encoded_test_b64.txt","decoded_test5.txt");
-  system("cat decoded_test5.txt");
+  FILE *f_decoded = fopen("decoded_test5.txt", "rb");
+  if (f_decoded) {
+    uint32_t value;
+    while (fread(&value, sizeof(uint32_t), 1, f_decoded) == 1) {
+        printf("%u ", value);  // Affiche la valeur entière
+    }
+    fclose(f_decoded);
+    printf("\n");
+  } else {
+    perror("Erreur à l'ouverture du fichier dechiffré");
+  }
   
-  //printf("Dechiffrement du fichier...\nContenu du message totalement dechiffré:\n");
+  printf("Dechiffrement du fichier...\nContenu du message totalement dechiffré:\n");
   /*Conversion de binaire en texte*/ 
-  /*dechiffrer_bloc_dans_fichier("decoded_test6.txt","final_message.txt",&privateKey);
+  dechiffrer_bloc_dans_fichier("decoded_test6.txt","final_message.txt",&privateKey);
   system("cat final_message.txt");
-  */
+  
   
   printf("\n... Fin du test5 ... \n");
 }

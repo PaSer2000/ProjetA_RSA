@@ -30,6 +30,4 @@ int main() {
 
     test5Phase2("cle_chiffree_hexa.txt","message_Test_Phase2.txt");
 
-    test_intermittent();
-
   }

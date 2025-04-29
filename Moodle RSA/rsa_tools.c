@@ -635,7 +635,7 @@ void dechiffrementBloc(mpz_t resultat,mpz_t bloc_a_dechiffrer,rsaKey_t *privateK
 void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t *publicKey){
 
   //ouverture des fichiers et controle des erreurs
-  FILE* fich_source=fopen(fichier_source,"rb");
+  FILE* fich_source=fopen(fichier_source,"rt");
   if(fich_source==NULL){
     perror("Ouverture du fichier source : échec\n");
     exit(1);
@@ -652,8 +652,8 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
   mpz_t resultat,bloc_mpz;
   mpz_init(resultat);
   mpz_init(bloc_mpz);
-  uint8_t a_convertir[4]={0};
   uint32_t res;
+  uint8_t a_convertir[4]={0};
 
   while ((nbLu=fread(a_convertir,sizeof(uint8_t),4,fich_source)) > 0) {
     //si nbLu plus petit que 4 octets
@@ -663,10 +663,14 @@ void chiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey_t
       }
     }
 
+    //on le stock dans un mpz_t
     mpz_set_ui(bloc_mpz,convert_4byte2int(a_convertir));
     chiffrementBloc(resultat,bloc_mpz,publicKey);
-    //fprintf(fich_dest,"%ld ",mpz_get_ui(resultat));
+    
+    //conversion mpz en uint32_t
     res=(uint32_t)mpz_get_ui(resultat);
+
+    //ecriture dans le fichier
     fwrite(&res,sizeof(uint32_t),1,fich_dest);
   }
 
@@ -700,18 +704,17 @@ void dechiffrer_bloc_dans_fichier(char* fichier_source,char* fichier_dest,rsaKey
   mpz_init(bloc_mpz);
   uint8_t tab4bytes[4]={0};
 
-  while (fread(&current,sizeof(uint32_t),1,fich_source)==1) {
+
+  while (fread(&current, sizeof(uint32_t), 1, fich_source) == 1) {
+    //conversion uint32_t en mpz_t
     mpz_set_ui(bloc_mpz,current);
-    //déchiffrement du uint32_t qui a été lu
+
+    //dechiffrement bloc
     dechiffrementBloc(resultat,bloc_mpz,privateKey);
 
-    //conversion en 4 caractères
-    convertInt2uchar((uint32_t)mpz_get_ui(resultat),tab4bytes);
-
-    //écriture des caractères dans le fichier dest
-    for(int i=0;i<4;i++){
-      fprintf(fich_dest,"%c",tab4bytes[i]);
-    }
+    //conversion en tableau de 4 octets
+    convertInt2uchar((uint32_t) mpz_get_ui(resultat), tab4bytes);
+    fwrite(tab4bytes, sizeof(uint8_t), 4, fich_dest);
   }
 
   //fermeture des fichiers et libération mémoire du resultat
