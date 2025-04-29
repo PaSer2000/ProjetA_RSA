@@ -157,6 +157,7 @@ void sauvegarderCle(keysDynamicList *keyList, char *filename, rsaKey_t public)
 
     fclose(file);
     chiffrer_bloc_dans_fichier(filename, "cleChiffre.txt", &public);
+    //system("rm clé.txt"); marche mais vaut mieux garder clé.txt pour l'instant
 }
 
 // Fonction de nettoyage du tampon d'entrée
