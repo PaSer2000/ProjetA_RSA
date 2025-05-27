@@ -17,8 +17,8 @@ phase1_exec: rsa_tools.o phase1.o bezout.o test.o int2char.o
 phase2_exec: rsa_tools.o phase2.o bezout.o test.o int2char.o
 	$(CC) -o phase2_exec rsa_tools.o phase2.o bezout.o test.o int2char.o $(LDFLAGS)
 
-phase3_exec : rsa_tools.o phase3.o bezout.o int2char.o
-	$(CC) -o phase3_exec rsa_tools.o phase3.o bezout.o int2char.o $(LDFLAGS)
+phase3_exec : rsa_tools.o phase3.o bezout.o int2char.o sha256.o
+	$(CC) -o phase3_exec rsa_tools.o phase3.o bezout.o int2char.o sha256.o $(LDFLAGS)
 
 Executable: rsa_tools.o phase1.o bezout.o test.o
 	$(CC) -o Executable rsa_tools.o phase1.o bezout.o test.o $(LDFLAGS)
@@ -44,6 +44,9 @@ test.o: test.c rsa_common_header.h test.h bezout.h
 
 int2char.o: int2char.c int2char.h 
 	$(CC) $(CFLAGS) int2char.c
+
+sha256.o : sha256.c sha256.h
+	$(CC) $(CFLAGS) sha256.c
 #clean
 clean:
 	rm -f Executable phase1_exec phase2_exec *.o

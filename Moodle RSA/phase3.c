@@ -5,6 +5,7 @@
 #include "rsa_common_header.h"
 #include <string.h>
 #include <unistd.h>
+#include <sha256.h>
 #define TAILLE_MAX_NOM_FICHIER 30
 #define TAILLE_MAX_COMMANDE 100
 
@@ -396,6 +397,30 @@ int main()
         else if (strcmp(choix, "load") == 0)
         {
             extraireClesFromFile(mainKeyList, "cleChiffre.txt", mainPrivateKey);
+        }
+        else if (strcmp(choix, "sign") == 0){
+            char in[TAILLE_MAX_NOM_FICHIER];
+            char out[TAILLE_MAX_NOM_FICHIER];
+            int idCleSign = -1;
+            int idCleCrypt = -1;
+            sscanf(commande, "%s %s %s %d %d", choix, in, out, &idCleSign, &idCleCrypt);
+            keyIdentifier *keyStructSign = getKeyWithID(mainKeyList, idCleSign);
+            
+            if (keyStructSign != NULL && keyStructSign->type == 1)
+            {
+                
+            }else{
+                printf("Erreur : merci d'utiliser une clé de type signature (1)\n");
+            }
+
+            //Si l'utilsateur veut crypter ou non le fichier à signer
+            if(idCleCrypt != -1){
+                keyIdentifier *keyStructCrypt = getKeyWithID(mainKeyList, idCleCrypt);
+                rsaKey_t public = keyStructSign->public;
+                chiffrer_bloc_dans_fichier(in, out, &public);
+            }
+
+
         }
         else
         {
