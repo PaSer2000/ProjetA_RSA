@@ -13,6 +13,7 @@
 #include <stdint.h> // uintX_t et la suite
 #include <gmp.h>
 
+
 #define BLOCK_SIZE 4 // en octets
 #define MAX_PRIME 1000000000000000000 //1*10^18
 // avec GMP on peut gérer de plus grands nombres

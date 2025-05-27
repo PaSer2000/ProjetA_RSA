@@ -5,7 +5,7 @@
 #include "rsa_common_header.h"
 #include <string.h>
 #include <unistd.h>
-#include <sha256.h>
+#include "sha256.h"
 #define TAILLE_MAX_NOM_FICHIER 30
 #define TAILLE_MAX_COMMANDE 100
 
@@ -400,27 +400,121 @@ int main()
         }
         else if (strcmp(choix, "sign") == 0){
             char in[TAILLE_MAX_NOM_FICHIER];
-            char out[TAILLE_MAX_NOM_FICHIER];
             int idCleSign = -1;
             int idCleCrypt = -1;
-            sscanf(commande, "%s %s %s %d %d", choix, in, out, &idCleSign, &idCleCrypt);
+            sscanf(commande, "%s %s %d %d", choix, in, &idCleSign, &idCleCrypt);
             keyIdentifier *keyStructSign = getKeyWithID(mainKeyList, idCleSign);
             
             if (keyStructSign != NULL && keyStructSign->type == 1)
             {
-                
-            }else{
+                FILE *file = fopen(in, "rb");
+                if(file == NULL){
+                    printf("Error\n");
+                }
+
+                SHA256_CTX ctx;
+                BYTE data[1024];
+                BYTE hash[32];
+                size_t bytesRead;
+
+                sha256_init(&ctx);
+                while((bytesRead = fread(data, 1, sizeof(data), file)) != 0){
+                    sha256_update(&ctx, data, bytesRead);
+                }
+                sha256_final(&ctx, hash);
+                fclose(file);
+
+                FILE *digest = fopen("P3digest.txt", "wb");
+                if(digest == NULL){
+                    printf("Error\n");
+                }
+                for(int i =0; i<32; i++){
+                    fprintf(digest, "%02x", hash[i]);
+                }
+                fclose(digest);
+                rsaKey_t public = keyStructSign->public;
+                chiffrer_bloc_dans_fichier("P3digest.txt", "P3digestChiffr.txt", &public);
+
+            }
+            else{
                 printf("Erreur : merci d'utiliser une clé de type signature (1)\n");
             }
 
             //Si l'utilsateur veut crypter ou non le fichier à signer
-            if(idCleCrypt != -1){
+            /*if(idCleCrypt != -1){
                 keyIdentifier *keyStructCrypt = getKeyWithID(mainKeyList, idCleCrypt);
                 rsaKey_t public = keyStructSign->public;
                 chiffrer_bloc_dans_fichier(in, out, &public);
+            }*/
+
+
+        }else if (strcmp(choix, "verifySign") == 0){
+            char in[TAILLE_MAX_NOM_FICHIER];
+            int idCleSign = -1;
+            int idCleCrypt = -1;
+            sscanf(commande, "%s %s %d %d", choix, in, &idCleSign, &idCleCrypt);
+            keyIdentifier *keyStructSign = getKeyWithID(mainKeyList, idCleSign);
+            
+            if (keyStructSign != NULL && keyStructSign->type == 1)
+            {
+                FILE *file = fopen(in, "rb");
+                if(file == NULL){
+                    printf("Error\n");
+                }
+
+                SHA256_CTX ctx;
+                BYTE data[1024];
+                BYTE hash[32];
+                size_t bytesRead;
+
+                sha256_init(&ctx);
+                while((bytesRead = fread(data, 1, sizeof(data), file)) != 0){
+                    sha256_update(&ctx, data, bytesRead);
+                }
+                sha256_final(&ctx, hash);
+                fclose(file);
+
+                FILE *digestv2 = fopen("P3digest2.txt", "wb");
+                if(digestv2 == NULL){
+                    printf("Error\n");
+                }
+                for(int i =0; i<32; i++){
+                    fprintf(digestv2, "%02x", hash[i]);
+                }
+
+                fclose(digestv2);
+
+                FILE *digest2 = fopen("P3digest2.txt", "rb");
+                if(digest2 == NULL){
+                    printf("Error\n");
+                }
+                
+                rsaKey_t private = keyStructSign->private;
+                dechiffrer_bloc_dans_fichier("P3digestChiffr.txt", "P3digestUnchiffr.txt", &private);
+                FILE *digestUnchiffr = fopen("P3digestUnchiffr.txt", "rb");
+                if(digestUnchiffr == NULL){
+                    printf("Error\n");
+                }
+
+                char resultDigestUncrypt[100];
+                char resultDigest2[100];
+
+                fgets(resultDigestUncrypt, 100, digestUnchiffr);
+                fgets(resultDigest2, 100, digest2);
+
+
+                if(strcmp(resultDigestUncrypt, resultDigest2) == 0){
+                    printf("Le fichier est bien confirmé !\n");
+                }else{
+                    printf("Ce fichier n'est pas authentique\n");
+                }
+
+                fclose(digestUnchiffr);
+                fclose(digest2);
+            } 
+            else{
+                printf("Erreur : merci d'utiliser une clé de type signature (1)\n");
             }
-
-
         }
         else
         {
