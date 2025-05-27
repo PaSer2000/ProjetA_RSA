@@ -14,6 +14,7 @@ typedef struct
     rsaKey_t public;
     rsaKey_t private;
     int id;
+    int type; //0 = cle de chiffrement, 1 = cle de signature
 } keyIdentifier;
 
 typedef struct s_node
@@ -61,12 +62,13 @@ void list_delete(keysDynamicList **l)
 }
 
 // Fonction pour créer une nouvelle clé
-keyIdentifier *createNewKeys(rsaKey_t public, rsaKey_t private, int id)
+keyIdentifier *createNewKeys(rsaKey_t public, rsaKey_t private, int id, int type)
 {
     keyIdentifier *new = malloc(sizeof(keyIdentifier));
     new->id = id;
     new->private = private;
     new->public = public;
+    new->type = type;
     return new;
 }
 
@@ -89,7 +91,7 @@ keysDynamicList *list_map(keysDynamicList *l)
     node *element = l->sentinel->next;
     while (element != l->sentinel)
     {
-        printf("\n----------\nPaire n° %d : ", element->keyStruct->id);
+        printf("\n----------\nPaire n° %d de type %d : ", element->keyStruct->id, element->keyStruct->type);
         affichageClefs(&(element->keyStruct->public), &(element->keyStruct->private));
         printf("\n");
         element = element->next;
@@ -107,7 +109,7 @@ keysDynamicList *supprimerCle(keysDynamicList *l, int id)
         {
             element->previous->next = element->next;
             element->next->previous = element->previous;
-            printf("Suppression de la paire n°%d\n", element->keyStruct->id);
+            printf("Suppression de la paire n°%d de type %d\n", element->keyStruct->id, element->keyStruct->type);
             free(element->keyStruct);
             free(element);
             l->size -= 1;
@@ -151,7 +153,7 @@ void sauvegarderCle(keysDynamicList *keyList, char *filename, rsaKey_t public)
     for (; key != keyList->sentinel; key = key->next)
     {
         printf("+ 1 key\n");
-        fprintf(file, "%d %lu %lu %lu\n", key->keyStruct->id, key->keyStruct->public.N, key->keyStruct->public.E, key->keyStruct->private.E);
+        fprintf(file, "%d %lu %lu %lu %d\n", key->keyStruct->id, key->keyStruct->public.N, key->keyStruct->public.E, key->keyStruct->private.E, key->keyStruct->type);
     }
 
     fclose(file);
@@ -166,14 +168,14 @@ void clearBuffer()
     while ((clean = getchar() != '\n') && clean != EOF)
         ;
 }
-void genererPairCle(keysDynamicList *keyList, int id)
+void genererPairCle(keysDynamicList *keyList, int id, int type)
 {
     printf("Generation des clés publique et privee...\n");
     rsaKey_t publicKey, privateKey;
     genKeysRabin(&publicKey, &privateKey, MAX_PRIME);
     printf("La paire de cle n°%d a ete generee :\n", id);
     affichageClefs(&publicKey, &privateKey);
-    list_push_back(keyList, createNewKeys(publicKey, privateKey, id));
+    list_push_back(keyList, createNewKeys(publicKey, privateKey, id, type));
 }
 
 int noDouble(keysDynamicList *list, int id)
@@ -246,13 +248,14 @@ void extraireClesFromFile(keysDynamicList *list, char *fileName, rsaKey_t cle)
     }
     char ligneLue[TAILLE_MAX_COMMANDE];
     int id = 0;
+    int type = 0;
     uint64_t expPublic = 0;
     uint64_t expPrive = 0;
     uint64_t module = 0;
     rsaKey_t public, private;
     while (fgets(ligneLue, TAILLE_MAX_COMMANDE, file) != NULL)
     {
-        sscanf(ligneLue, "%d %lu %lu %lu", &id, &module, &expPublic, &expPrive);
+        sscanf(ligneLue, "%d %lu %lu %lu %d", &id, &module, &expPublic, &expPrive, &type);
         if (noDouble(list, id) == 0)
         {
             printf("+1 cle loaded\n");
@@ -260,7 +263,7 @@ void extraireClesFromFile(keysDynamicList *list, char *fileName, rsaKey_t cle)
             public.E = expPublic;
             private.N = module;
             private.E = expPrive;
-            list_push_back(list, createNewKeys(public, private, id));
+            list_push_back(list, createNewKeys(public, private, id, type));
         }
         else
         {
@@ -311,12 +314,13 @@ int main()
         else if (strcmp(choix, "newkeys") == 0)
         {
             int id;
-            sscanf(commande, "%s %d", choix, &id);
-            if (id > 0)
+            int type;
+            sscanf(commande, "%s %d %d", choix, &id, &type);
+            if (id > 0 && (type == 0 || type == 1))
             {
                 if (noDouble(mainKeyList, id) == 0)
                 { // On vérifie qu'il n'y ai pas deja une cle avec cet id, pas de double
-                    genererPairCle(mainKeyList, id);
+                    genererPairCle(mainKeyList, id, type);
                 }
                 else
                 {
@@ -324,7 +328,7 @@ int main()
                 }
             }
             else{
-                printf("Error : Identifiant de cles <=0 interdit\n");
+                printf("Error : Identifiant de cles <=0 interdit et type = O/1\n");
             }
         }
         else if (strcmp(choix, "bin-2b64") == 0)
@@ -366,10 +370,12 @@ int main()
             int idCleCrypt = -1;
             sscanf(commande, "%s %s %s %d", choix, in, out, &idCleCrypt);
             keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCleCrypt);
-            if (keyStruct != NULL)
+            if (keyStruct != NULL && keyStruct->type == 0)
             {
                 rsaKey_t public = keyStruct->public;
                 chiffrer_bloc_dans_fichier(in, out, &public);
+            }else{
+                printf("Erreur : merci d'utiliser une clé de type chiffrage (0) pour le chiffrement\n");
             }
         }
         else if (strcmp(choix, "uncrypt") == 0)
@@ -379,10 +385,12 @@ int main()
             int idCleUncrypt = -1;
             sscanf(commande, "%s %s %s %d", choix, in, out, &idCleUncrypt);
             keyIdentifier *keyStruct = getKeyWithID(mainKeyList, idCleUncrypt);
-            if (keyStruct != NULL)
+            if (keyStruct != NULL && keyStruct->type == 0)
             {
                 rsaKey_t private = keyStruct->private;
                 dechiffrer_bloc_dans_fichier(in, out, &private);
+            }else{
+                printf("Erreur : merci d'utiliser une clé de type chiffrage (0) pour le dechiffrement\n");
             }
         }
         else if (strcmp(choix, "load") == 0)
